@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "273289006400",
+    "project_id": "pharmacy-mangement",
+    "storage_bucket": "pharmacy-mangement.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:273289006400:android:9d3329cdb369696cf93ea5",
+        "android_client_info": {
+          "package_name": "com.example.pharmacy_management"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA-QKB88SMD0ZesPGZrXRXSUSEdy-1E8eY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

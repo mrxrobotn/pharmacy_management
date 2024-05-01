@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmacy_management/views/admin/admin_home.dart';
@@ -20,17 +19,18 @@ void main() async {
   if (user != null) {
     await users.doc(userUID).get().then((value) {
       if (value['role'] == Role.admin) {
-        runApp(const AdminHome());
+        runApp(const Admin());
       }
       if (value['role'] == Role.pharmacien) {
-        runApp(const PharmacienHome());
+        runApp(const Pharmacien());
       }
       if (value['role'] == Role.client) {
-        runApp(const ClientHome());
+        runApp(const Client());
       }
       if (value['role'] == Role.fournisseur) {
-        runApp(const FournisseurHome());
+        runApp(const Fournisseur());
       }
+      print(value['role']);
     });
   } else {
     print("User is not logged in");
@@ -45,7 +45,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           fontFamily: 'HelveticaNeue',
           textTheme: Theme.of(context).textTheme.apply(fontFamily: 'HelveticaNeue'),
@@ -74,6 +73,54 @@ class MyApp extends StatelessWidget {
           )
       ),
       home: const WelcomeScreen()
+    );
+  }
+}
+
+class Admin extends StatelessWidget {
+  const Admin({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'Admin Page',
+      home: AdminHome(),
+    );
+  }
+}
+
+class Client extends StatelessWidget {
+  const Client({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'Client Page',
+      home: ClientHome(),
+    );
+  }
+}
+
+class Pharmacien extends StatelessWidget {
+  const Pharmacien({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'Pharmacien Page',
+      home: PharmacienHome(),
+    );
+  }
+}
+
+class Fournisseur extends StatelessWidget {
+  const Fournisseur({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      title: 'Fournisseur Page',
+      home: FournisseurHome(),
     );
   }
 }

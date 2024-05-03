@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../constants.dart';
 import '../../../../controllers/auth_response.dart';
 import '../../../../controllers/authentication_service.dart';
@@ -8,6 +9,8 @@ import '../../../../functions.dart';
 import '../../../../models/user_model.dart';
 import '../../../widgets/already_have_an_account_acheck.dart';
 import '../../Login/login_screen.dart';
+import 'dart:io';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 
 class SignUpForm extends StatefulWidget {
@@ -23,12 +26,75 @@ class _SignUpFormState extends State<SignUpForm> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _roleController = TextEditingController();
   Role _selectedRole = Role.client;
+  File? _selectedImage;
+
+  Future<void> _pickImage() async {
+    final imagePicker = ImagePicker();
+    final pickedImage = await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(Icons.camera_alt),
+                title: const Text('Camera'),
+                onTap: () async {
+                  Navigator.pop(context, await imagePicker.pickImage(source: ImageSource.camera));
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.photo_library),
+                title: const Text('Gallery'),
+                onTap: () async {
+                  Navigator.pop(context, await imagePicker.pickImage(source: ImageSource.gallery));
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Form(
       key: _formKey,
       child: Column(
         children: <Widget> [
+          GestureDetector(
+            onTap: _pickImage,
+            child: Container(
+              width: 150,
+              height: 150,
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(75),
+                image: _selectedImage != null
+                    ? DecorationImage(
+                  image: FileImage(_selectedImage!),
+                  fit: BoxFit.cover,
+                )
+                    : null,
+              ),
+              child: _selectedImage == null
+                  ? const Icon(
+                Icons.camera_alt,
+                size: 40,
+                color: Colors.white,
+              )
+                  : null,
+            ),
+          ),
+          const SizedBox(height: kDefaultPadding),
           TextFormField(
             controller: username,
             keyboardType: TextInputType.text,
@@ -135,11 +201,12 @@ class _SignUpFormState extends State<SignUpForm> {
           ),
           const SizedBox(height: kDefaultPadding),
           ElevatedButton(
-            onPressed: () {
-              if (_formKey.currentState!.validate()) {
+            onPressed: () async {
+              if (_formKey.currentState!.validate() && _selectedImage != null) {
                 String un = username.text;
                 String em = email.text;
                 String pwd = password.text;
+                String imageUrl = await _uploadImage(un);
 
                 if (un.isEmpty || em.isEmpty || pwd.isEmpty) {
                   print('One or more fields are empty');
@@ -160,8 +227,10 @@ class _SignUpFormState extends State<SignUpForm> {
                           name: un,
                           role: _selectedRole,
                           canAccess: canAccess,
+                          thumbnail: imageUrl,
                         );
                         UserController().saveUserToFirestore(user);
+                        _selectedImage = null;
                       } else {
                         print('User UID is null');
                       }
@@ -202,6 +271,32 @@ class _SignUpFormState extends State<SignUpForm> {
       ),
     );
   }
+
+  Future<String> _uploadImage(String fileName) async {
+    try {
+      if (_selectedImage != null) {
+
+        // Upload image to Firebase Storage
+        firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance
+            .ref()
+            .child('users/$fileName.jpg');
+
+        await ref.putFile(_selectedImage!);
+
+        // Get the image URL
+        String imageUrl = await ref.getDownloadURL();
+
+        return imageUrl;
+      } else {
+        print('No image selected');
+        return '';
+      }
+    } catch (e) {
+      print('Error uploading image: $e');
+      return '';
+    }
+  }
+
   void _showRolePickerDialog(BuildContext context) {
     showDialog(
       context: context,

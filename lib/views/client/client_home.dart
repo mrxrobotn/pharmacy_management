@@ -37,13 +37,13 @@ class _ClientHomeState extends State<ClientHome> {
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(selectBtn == 0 ? 0.0 : 20.0),
           topRight:
-          Radius.circular(selectBtn == navBtn.length - 1 ? 0.0 : 20.0),
+          Radius.circular(selectBtn == clientNavBar.length - 1 ? 0.0 : 20.0),
         ),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          for (int i = 0; i < navBtn.length; i++)
+          for (int i = 0; i < clientNavBar.length; i++)
             GestureDetector(
               onTap: () => setState(() => selectBtn = i),
               child: iconBtn(i),
@@ -77,7 +77,7 @@ class _ClientHomeState extends State<ClientHome> {
           Align(
             alignment: Alignment.center,
             child: Image.asset(
-              navBtn[i].imagePath,
+              clientNavBar[i].imagePath,
               color: isActive ? kBlue : kGrey,
               scale: 2,
             ),
@@ -85,7 +85,7 @@ class _ClientHomeState extends State<ClientHome> {
           Align(
             alignment: Alignment.bottomCenter,
             child: Text(
-              navBtn[i].name,
+              clientNavBar[i].name,
               style: isActive ? const TextStyle(
                 color: kGrey,
                 fontWeight: FontWeight.w500,

@@ -60,7 +60,7 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
           },
         ),
         title: const Text(
-          'Details',
+          'Descirption du produit',
           style: TextStyle(
             fontFamily: 'Varela',
             fontSize: 24.0,
@@ -70,20 +70,8 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
       ),
       body: ListView(
         children: [
+
           const SizedBox(height: 16.0),
-          const Padding(
-            padding: EdgeInsets.only(left: 16.0),
-            child: Text(
-              'Plus des détails:',
-              style: TextStyle(
-                fontFamily: 'Varela',
-                fontSize: 40.0,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFF17532),
-              ),
-            ),
-          ),
-          SizedBox(height: 16.0),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Hero(
@@ -101,7 +89,7 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
               ),
             ),
           ),
-          SizedBox(height: 16.0),
+          const SizedBox(height: 16.0),
           Center(
             child: Text(
               'Prix: ${widget.price}',

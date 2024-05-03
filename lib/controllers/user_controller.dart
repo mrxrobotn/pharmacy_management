@@ -41,6 +41,7 @@ class UserController {
             role: Role.values.firstWhere(
                     (role) => role.toString() == 'Role.${data['role']}'),
             canAccess: data['canAccess'],
+            thumbnail: data['thumbnail'],
           );
         }
       }
@@ -63,6 +64,7 @@ class UserController {
           role: Role.values.firstWhere(
                   (role) => role.toString() == 'Role.${data['role']}'),
           canAccess: data['canAccess'],
+          thumbnail: data['thumbnail'],
         );
       } else {
         print('User with ID $userID does not exist');

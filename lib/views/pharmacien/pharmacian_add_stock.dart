@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
-import 'package:pharmacy_management/functions.dart';
 import 'package:pharmacy_management/models/medicine_model.dart';
 
 import '../../constants.dart';
@@ -187,9 +186,9 @@ class _AddMedecinesPageState extends State<AddMedecinesPage> {
                   onPressed: () async {
                     if (_FormKey.currentState!.validate()) {
                       if (_selectedImage != null) {
-                        // Save data to Firebase
                         // Upload image to Firebase Storage
-                        String imageUrl = await _uploadImage();
+                       
+                        String imageUrl = await _uploadImage(nameController.text);
 
                         MedicineModel medicine = MedicineModel(
                           uid: '',
@@ -237,11 +236,9 @@ class _AddMedecinesPageState extends State<AddMedecinesPage> {
   }
 
 
-  Future<String> _uploadImage() async {
+  Future<String> _uploadImage(String fileName) async {
     try {
       if (_selectedImage != null) {
-        // Generate a unique filename for the image
-        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
 
         // Upload image to Firebase Storage
         firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance

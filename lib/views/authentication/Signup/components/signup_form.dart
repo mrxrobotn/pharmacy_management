@@ -274,6 +274,7 @@ class _SignUpFormState extends State<SignUpForm> {
           role.toString().split('.').last,
           style: const TextStyle(
             fontSize: 16.0,
+            color: kWhite
           ),
         ),
       ),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../widgets/background.dart';
-import '../../../responsive.dart';
+import '../../widgets/responsive.dart';
 import 'components/forget_form.dart';
 import 'components/forget_screen_top_image.dart';
 

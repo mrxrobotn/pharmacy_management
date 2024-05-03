@@ -18,16 +18,16 @@ void main() async {
 
   if (user != null) {
     await users.doc(userUID).get().then((value) {
-      if (value['role'] == Role.admin) {
+      if (value['role'] == 'admin') {
         runApp(const Admin());
       }
-      if (value['role'] == Role.pharmacien) {
+      if (value['role'] == 'pharmacien') {
         runApp(const Pharmacien());
       }
-      if (value['role'] == Role.client) {
+      if (value['role'] == 'client') {
         runApp(const Client());
       }
-      if (value['role'] == Role.fournisseur) {
+      if (value['role'] == 'fournisseur') {
         runApp(const Fournisseur());
       }
       print(value['role']);

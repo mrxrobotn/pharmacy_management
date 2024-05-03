@@ -11,9 +11,9 @@ class NavBarModel {
 }
 
 List<NavBarModel> navBtn = [
-  NavBarModel(id: 0, imagePath: 'assets/icon/home.png', name: 'Home'),
-  NavBarModel(id: 1, imagePath: 'assets/icon/search.png', name: 'Search'),
-  NavBarModel(id: 2, imagePath: 'assets/icon/heart.png', name: 'Like'),
-  NavBarModel(id: 3, imagePath: 'assets/icon/notification.png', name: 'notification'),
-  NavBarModel(id: 4, imagePath: 'assets/icon/user.png', name: 'Profile'),
+  NavBarModel(id: 0, imagePath: 'assets/icons/home.png', name: 'Acceuil'),
+  NavBarModel(id: 1, imagePath: 'assets/icons/lists.png', name: 'Commandes'),
+  NavBarModel(id: 2, imagePath: 'assets/icons/messenger.png', name: 'Chat'),
+  NavBarModel(id: 3, imagePath: 'assets/icons/chats.png', name: 'Aide'),
+  NavBarModel(id: 4, imagePath: 'assets/icons/user.png', name: 'Profile'),
 ];

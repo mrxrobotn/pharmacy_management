@@ -1,11 +1,11 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:pharmacy_management/themes.dart';
 import 'package:pharmacy_management/views/admin/admin_home.dart';
 import 'package:pharmacy_management/views/authentication/Welcome/welcome_screen.dart';
 import 'package:pharmacy_management/views/client/client_home.dart';
 import 'package:pharmacy_management/views/fournisseur/fournisseur_home.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_home.dart';
-import 'constants.dart';
 import 'firebase_options.dart';
 import 'functions.dart';
 
@@ -45,33 +45,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      theme: ThemeData(
-          fontFamily: 'HelveticaNeue',
-          textTheme: Theme.of(context).textTheme.apply(fontFamily: 'HelveticaNeue'),
-          primaryColor: kPrimaryColor,
-          scaffoldBackgroundColor: Colors.white,
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              elevation: 0,
-              backgroundColor: kPrimaryColor,
-              shape: const StadiumBorder(),
-              maximumSize: const Size(double.infinity, 56),
-              minimumSize: const Size(double.infinity, 56),
-            ),
-          ),
-          inputDecorationTheme: const InputDecorationTheme(
-            filled: true,
-            fillColor: kPrimaryLightColor,
-            iconColor: kPrimaryColor,
-            prefixIconColor: kPrimaryColor,
-            contentPadding: EdgeInsets.symmetric(
-                horizontal: kDefaultPadding, vertical: kDefaultPadding),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(30)),
-              borderSide: BorderSide.none,
-            ),
-          )
-      ),
+      theme: mainTheme(context),
       home: const WelcomeScreen()
     );
   }
@@ -82,9 +56,10 @@ class Admin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Admin Page',
-      home: AdminHome(),
+      theme: mainTheme(context),
+      home: const AdminHome(),
     );
   }
 }
@@ -94,9 +69,10 @@ class Client extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Client Page',
-      home: ClientHome(),
+      theme: mainTheme(context),
+      home: const ClientHome(),
     );
   }
 }
@@ -106,9 +82,10 @@ class Pharmacien extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Pharmacien Page',
-      home: PharmacienHome(),
+      theme: mainTheme(context),
+      home: const PharmacienHome(),
     );
   }
 }
@@ -118,9 +95,10 @@ class Fournisseur extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       title: 'Fournisseur Page',
-      home: FournisseurHome(),
+      theme: mainTheme(context),
+      home: const FournisseurHome(),
     );
   }
 }

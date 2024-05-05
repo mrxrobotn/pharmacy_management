@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmacy_management/constants.dart';
 import '../../models/navbar_model.dart';
 import '../widgets/custom_paint.dart';
+import 'client_messages.dart';
 
 class ClientHome extends StatefulWidget {
   const ClientHome({super.key});
@@ -11,18 +12,29 @@ class ClientHome extends StatefulWidget {
 }
 
 class _ClientHomeState extends State<ClientHome> {
-  int selectBtn = 0;
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    const Placeholder(),
+    const ClientMessages(),
+    const Placeholder(),
+    const Placeholder(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBlue,
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: const Text("Bienvenue"),
+      ),
       body: Stack(
         children: [
+          _pages[_selectedIndex],
           Align(
             alignment: Alignment.bottomCenter,
             child: navigationBar(),
-          )
+          ),
         ],
       ),
     );
@@ -35,9 +47,9 @@ class _ClientHomeState extends State<ClientHome> {
       decoration: BoxDecoration(
         color: kWhite,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(selectBtn == 0 ? 0.0 : 20.0),
+          topLeft: Radius.circular(_selectedIndex == 0 ? 0.0 : 20.0),
           topRight:
-          Radius.circular(selectBtn == clientNavBar.length - 1 ? 0.0 : 20.0),
+          Radius.circular(_selectedIndex == clientNavBar.length - 1 ? 0.0 : 20.0),
         ),
       ),
       child: Row(
@@ -45,7 +57,7 @@ class _ClientHomeState extends State<ClientHome> {
         children: [
           for (int i = 0; i < clientNavBar.length; i++)
             GestureDetector(
-              onTap: () => setState(() => selectBtn = i),
+              onTap: () => setState(() => _selectedIndex = i),
               child: iconBtn(i),
             ),
         ],
@@ -54,7 +66,7 @@ class _ClientHomeState extends State<ClientHome> {
   }
 
   SizedBox iconBtn(int i) {
-    bool isActive = selectBtn == i ? true : false;
+    bool isActive = _selectedIndex == i ? true : false;
     var height = isActive ? 60.0 : 0.0;
     var width = isActive ? 50.0 : 0.0;
     return SizedBox(

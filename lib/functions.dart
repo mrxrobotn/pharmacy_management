@@ -14,6 +14,7 @@ String? getEmail = FirebaseAuth.instance.currentUser?.email;
 CollectionReference users = FirebaseFirestore.instance.collection("users");
 CollectionReference medicines = FirebaseFirestore.instance.collection("medicines");
 CollectionReference orders = FirebaseFirestore.instance.collection("orders");
+CollectionReference questions = FirebaseFirestore.instance.collection("questions");
 
 // TextEditingControllers
 final TextEditingController username = TextEditingController();

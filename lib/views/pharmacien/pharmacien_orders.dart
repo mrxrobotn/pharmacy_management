@@ -24,7 +24,7 @@ class _PharmacienOrdersState extends State<PharmacienOrders> {
   @override
   void initState() {
     super.initState();
-    _ordersStream = orders.where('senderUID', isEqualTo: userUID).snapshots();
+    _ordersStream = orders.where('recieverUID', isEqualTo: userUID).snapshots();
   }
 
   @override
@@ -66,6 +66,7 @@ class _PharmacienOrdersState extends State<PharmacienOrders> {
                       separatorBuilder: (context, index) => const Divider(),
                       itemBuilder: (context, index) {
                         final DocumentSnapshot documentSnapshot = streamSnapshot.data!.docs[index];
+
                         return FutureBuilder(
                           future: UserController().getUserDataById(documentSnapshot['senderUID']),
                           builder: (context, AsyncSnapshot<UserModel?> userSnapshot) {

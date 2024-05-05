@@ -20,8 +20,7 @@ List<NavBarModel> pharmacienNavBar = [
 
 List<NavBarModel> clientNavBar = [
   NavBarModel(id: 0, imagePath: 'assets/icons/home.png', name: 'Acceuil'),
-  NavBarModel(id: 1, imagePath: 'assets/icons/lists.png', name: 'Commandes'),
-  NavBarModel(id: 2, imagePath: 'assets/icons/messenger.png', name: 'Messages'),
-  NavBarModel(id: 3, imagePath: 'assets/icons/chats.png', name: 'Aide'),
-  NavBarModel(id: 4, imagePath: 'assets/icons/user.png', name: 'Profile'),
+  NavBarModel(id: 1, imagePath: 'assets/icons/messenger.png', name: 'Messages'),
+  NavBarModel(id: 2, imagePath: 'assets/icons/chats.png', name: 'Aide'),
+  NavBarModel(id: 3, imagePath: 'assets/icons/user.png', name: 'Profile'),
 ];

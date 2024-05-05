@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_help.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_messages.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_orders.dart';
+import 'package:pharmacy_management/views/pharmacien/pharmacien_settings.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_stock.dart';
 import '../../constants.dart';
 import '../../models/navbar_model.dart';
@@ -22,7 +23,7 @@ class _PharmacienHomeState extends State<PharmacienHome> {
     const PharmacienOrders(),
     const PharmacienMessages(),
     const PharmacienHelp(),
-    const Placeholder(),
+    const PharmacienSettings(),
   ];
 
   @override

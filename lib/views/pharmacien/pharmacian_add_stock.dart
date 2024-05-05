@@ -21,7 +21,9 @@ class _AddMedecinesPageState extends State<AddMedecinesPage> {
   TextEditingController descriptionController = TextEditingController();
   TextEditingController priceController = TextEditingController();
   TextEditingController quantityController = TextEditingController();
+  TextEditingController expirationController = TextEditingController();
   File? _selectedImage;
+  DateTime selectedDate = DateTime.now();
 
   Future<void> _pickImage() async {
     final imagePicker = ImagePicker();
@@ -55,6 +57,22 @@ class _AddMedecinesPageState extends State<AddMedecinesPage> {
     if (pickedImage != null) {
       setState(() {
         _selectedImage = File(pickedImage.path);
+      });
+    }
+  }
+
+  Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null && picked != selectedDate) {
+      setState(() {
+        selectedDate = picked;
+        expirationController.text = "${picked.day}-${picked.month}-${picked.year}";
       });
     }
   }
@@ -182,6 +200,35 @@ class _AddMedecinesPageState extends State<AddMedecinesPage> {
                   },
                 ),
                 const SizedBox(height: kDefaultPadding),
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade200,
+                    borderRadius: BorderRadius.circular(75),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const Spacer(),
+                      const Text("Date d'expiration:", style: TextStyle(fontSize: 16),),
+                      const Spacer(),
+                      Text(
+                        '${selectedDate.day}-${selectedDate.month}-${selectedDate.year}',
+                        style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          _selectDate(context);
+                        },
+                        icon: const Icon(Icons.edit_outlined),
+                      ),
+                    ],
+                  )
+                ),
+
+                const SizedBox(height: kDefaultPadding),
+
                 ElevatedButton(
                   onPressed: () async {
                     if (_FormKey.currentState!.validate()) {
@@ -198,6 +245,7 @@ class _AddMedecinesPageState extends State<AddMedecinesPage> {
                           quantity: int.parse(quantityController.text),
                           ownerUID: '',
                           thumbnail: imageUrl,
+                          expiration: expirationController.text,
                         );
                         await MedicineController().addMedicine(medicine);
 

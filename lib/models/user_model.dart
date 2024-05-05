@@ -8,6 +8,9 @@ class UserModel with ChangeNotifier {
   final Role role;
   final bool canAccess;
   final String thumbnail;
+  String? telephone;
+  String? address;
+  String? schedule;
 
   UserModel({
     required this.uid,
@@ -16,5 +19,8 @@ class UserModel with ChangeNotifier {
     required this.role,
     required this.canAccess,
     required this.thumbnail,
+    this.telephone,
+    this.address,
+    this.schedule,
   });
 }

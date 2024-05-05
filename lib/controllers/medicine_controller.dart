@@ -17,6 +17,8 @@ class MedicineController {
         'quantity': medicine.quantity,
         'ownerUID': medicine.ownerUID,
         'thumbnail': medicine.thumbnail,
+        'expiration': medicine.expiration,
+        'description': medicine.description,
       });
 
       // Retrieve the ID of the newly created document
@@ -39,6 +41,8 @@ class MedicineController {
         'price': updatedMedicine.price,
         'quantity': updatedMedicine.quantity,
         'thumbnail': updatedMedicine.thumbnail,
+        'expiration': updatedMedicine.expiration,
+        'description': updatedMedicine.description,
       });
     } catch (e) {
       print('Error updating data: $e');

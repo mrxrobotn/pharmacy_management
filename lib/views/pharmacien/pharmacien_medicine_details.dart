@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pharmacy_management/constants.dart';
 import 'package:pharmacy_management/controllers/medicine_controller.dart';
 import 'package:pharmacy_management/functions.dart';
 
@@ -11,10 +10,11 @@ class PharmacienMedicineDetails extends StatefulWidget {
   final String price;
   final String quantity;
   final String thumbnail;
+  final String expiration;
   final DocumentSnapshot documentSnapshot;
 
-  PharmacienMedicineDetails({
-    Key? key,
+  const PharmacienMedicineDetails({
+    super.key,
     required this.uid,
     required this.name,
     required this.description,
@@ -22,10 +22,12 @@ class PharmacienMedicineDetails extends StatefulWidget {
     required this.quantity,
     required this.documentSnapshot,
     required this.thumbnail,
-  }) : super(key: key);
+    required this.expiration,
+  });
 
   @override
-  _PharmacienMedicineDetailsState createState() => _PharmacienMedicineDetailsState();
+  _PharmacienMedicineDetailsState createState() =>
+      _PharmacienMedicineDetailsState();
 }
 
 class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
@@ -33,6 +35,7 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
   final TextEditingController descriptionController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
+  final TextEditingController expirationController = TextEditingController();
 
   @override
   void initState() {
@@ -41,180 +44,184 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
     descriptionController.text = widget.description;
     priceController.text = widget.price;
     quantityController.text = widget.quantity;
+    expirationController.text = widget.expiration;
   }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0.0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Color(0xFF545D68),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0.0,
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(
+              Icons.arrow_back,
+              color: Color(0xFF545D68),
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
           ),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
+          title: const Text(
+            'Descirption du produit',
+            style: TextStyle(
+              fontFamily: 'Varela',
+              fontSize: 24.0,
+              color: Color(0xFF545D68),
+            ),
+          ),
         ),
-        title: const Text(
-          'Descirption du produit',
-          style: TextStyle(
-            fontFamily: 'Varela',
-            fontSize: 24.0,
-            color: Color(0xFF545D68),
-          ),
-        ),
-      ),
-      body: ListView(
-        children: [
-
-          const SizedBox(height: 16.0),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Hero(
-              tag: widget.thumbnail,
-              child: Container(
-                height: 200,
-                width: 200,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  image: DecorationImage(
-                    fit: BoxFit.cover,
-                    image: NetworkImage(widget.thumbnail),
-                  ),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          Center(
-            child: Text(
-              'Prix: ${widget.price}',
-              style: const TextStyle(
-                fontFamily: 'Varela',
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFF17532),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          Center(
-            child: Text(
-              widget.name,
-              style: const TextStyle(
-                color: Color(0xFF575E67),
-                fontFamily: 'Varela',
-                fontSize: 24.0,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          Center(
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width - 52.0,
-              child: Text(
-                widget.description,
-                maxLines: 4,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontFamily: 'Varela',
-                  fontSize: 16.0,
-                  color: Color(0xFFB4B8B9),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16.0),
-          Column(
-            children: [
-              Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width - 100.0,
-                  height: 52.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24.0),
-                    color: const Color(0xFFF17532),
-                  ),
-                  child: Center(
-                    child: InkWell(
-                      onTap: () async {
-                        await confirmUpdate(context);
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.edit,
-                            size: 32,
-                            color: Colors.white,
+        body: Column(
+          children: [
+            Expanded(
+                flex: 2,
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 50),
+                      decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                              colors: [Color(0xff0043ba), Color(0xff006df1)]),
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(50),
+                            bottomRight: Radius.circular(50),
                           ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            'Modifier',
-                            style: TextStyle(
-                              fontFamily: 'Varela',
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(widget.thumbnail)
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: kDefaultPadding),
-              Center(
-                child: Container(
-                  width: MediaQuery.of(context).size.width - 100.0,
-                  height: 52.0,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(24.0),
-                    color: const Color(0xFFF17532),
-                  ),
-                  child: Center(
-                    child: InkWell(
-                      onTap: () async {
-                        await confirmDelete(context);
-                      },
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                  ],
+                )
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    Text(
+                      widget.name,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleLarge
+                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        FloatingActionButton.extended(
+                          onPressed: () async {
+                            await confirmUpdate(context);
+                          },
+                          heroTag: 'update',
+                          elevation: 0,
+                          label: const Text("Modifier"),
+                          icon: const Icon(Icons.edit),
+                        ),
+                        const SizedBox(width: 16.0),
+                        FloatingActionButton.extended(
+                          onPressed: () async {
+                            await confirmDelete(context);
+                          },
+                          heroTag: 'delete',
+                          elevation: 0,
+                          backgroundColor: Colors.red,
+                          label: const Text("Supprimer"),
+                          icon: const Icon(Icons.delete),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      height: double.maxFinite,
+                      constraints: const BoxConstraints(maxWidth: 400),
+                      child: Column(
                         children: [
-                          Icon(
-                            Icons.delete,
-                            size: 32,
-                            color: Colors.white,
+                          Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Expanded(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'Qté',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          widget.quantity,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        )
+                                      ],
+                                    )),
+                                const VerticalDivider(
+                                  thickness: 2,
+                                ),
+                                Expanded(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        const Padding(
+                                          padding: EdgeInsets.all(8.0),
+                                          child: Text(
+                                            'Prix',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          widget.price,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall,
+                                        )
+                                      ],
+                                    )),
+                              ]
                           ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            'Supprimer',
-                            style: TextStyle(
-                              fontFamily: 'Varela',
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                          const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Description',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
                             ),
                           ),
+                          Text(
+                            widget.description,
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall,
+                          )
                         ],
                       ),
-                    ),
-                  ),
+                    )
+                  ],
                 ),
               ),
-            ],
-          )
-        ],
-      ),
-    );
+            ),
+          ],
+        ));
   }
 
   Future<void> confirmUpdate(BuildContext context) async {
@@ -288,7 +295,8 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
                 decoration: const InputDecoration(labelText: 'Description'),
               ),
               TextField(
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 controller: priceController,
                 decoration: const InputDecoration(labelText: 'Prix'),
               ),
@@ -304,17 +312,17 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
           TextButton(
             onPressed: () async {
               final String name = nameController.text;
+              final String description = descriptionController.text;
               final int price = int.parse(priceController.text);
               final int quantity = int.parse(quantityController.text);
               await medicines.doc(widget.documentSnapshot.id).update({
                 'name': name,
                 'price': price,
                 'quantity': quantity,
+                'description': description,
               });
 
-              setState(() {
-
-              });
+              setState(() {});
 
               Navigator.of(context).pop();
             },

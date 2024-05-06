@@ -8,6 +8,28 @@ class MedicineController {
   // Collection reference
   final CollectionReference medicines = FirebaseFirestore.instance.collection('medicines');
 
+  Future<List<MedicineModel>> getAllMedicines() async {
+    try {
+      QuerySnapshot querySnapshot = await medicines.get();
+      List<MedicineModel> medicineList = querySnapshot.docs
+          .map((doc) => MedicineModel(
+        uid: doc.id,
+        name: doc['name'],
+        description: doc['description'],
+        price: doc['price'],
+        quantity: doc['quantity'],
+        ownerUID: doc['ownerUID'],
+        thumbnail: doc['thumbnail'],
+        expiration: doc['expiration'],
+      ))
+          .toList();
+      return medicineList;
+    } catch (e) {
+      print('Error fetching medicines: $e');
+      return [];
+    }
+  }
+
   Future<void> addMedicine(MedicineModel medicine) async {
     try {
       // Create a new document in the "medicines" collection

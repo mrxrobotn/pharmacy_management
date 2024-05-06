@@ -5,6 +5,7 @@ import '../../models/navbar_model.dart';
 import 'chat_patients_list.dart';
 import '../widgets/custom_paint.dart';
 import '../pharmacien/chat_pharmacien_list.dart';
+import 'client_shop_page.dart';
 
 class ClientHome extends StatefulWidget {
   const ClientHome({super.key});
@@ -17,7 +18,7 @@ class _ClientHomeState extends State<ClientHome> {
   int _selectedIndex = 0;
 
   final List<Widget> _pages = [
-    const Placeholder(),
+    const ClientShopPage(),
     const PatientChatList(),
     const Placeholder(),
     const SettingsPage(),
@@ -27,9 +28,6 @@ class _ClientHomeState extends State<ClientHome> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBlue,
-      appBar: AppBar(
-        title: const Text("Bienvenue"),
-      ),
       body: Stack(
         children: [
           _pages[_selectedIndex],

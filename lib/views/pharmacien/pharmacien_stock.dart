@@ -199,7 +199,6 @@ class _PharmacienStockState extends State<PharmacienStock> {
                                       const SizedBox(
                                         width: 16,
                                       ),
-
                                     ],
                                   ),
                                 ),

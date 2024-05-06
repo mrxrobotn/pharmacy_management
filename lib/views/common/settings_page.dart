@@ -128,7 +128,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                               const SizedBox(
                                                 height: 5,
                                               ),
-                                              if (_user.role != Role.admin)
+                                              if (_user.role == Role.pharmacien)
                                                 Row(
                                                   mainAxisAlignment:
                                                   MainAxisAlignment.center,

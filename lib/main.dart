@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: mainTheme(context),
       home: const WelcomeScreen()
     );
@@ -58,6 +59,7 @@ class Admin extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Admin Page',
+      debugShowCheckedModeBanner: false,
       theme: mainTheme(context),
       home: const AdminHome(),
     );
@@ -71,6 +73,7 @@ class Client extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Client Page',
+      debugShowCheckedModeBanner: false,
       theme: mainTheme(context),
       home: const ClientHome(),
     );
@@ -83,6 +86,7 @@ class Pharmacien extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Pharmacien Page',
       theme: mainTheme(context),
       home: const PharmacienHome(),
@@ -96,6 +100,7 @@ class Fournisseur extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Fournisseur Page',
       theme: mainTheme(context),
       home: const FournisseurHome(),

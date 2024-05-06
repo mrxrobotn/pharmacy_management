@@ -6,14 +6,14 @@ import '../../controllers/user_controller.dart';
 import '../../functions.dart';
 import '../../models/user_model.dart';
 
-class PharmacienSettings extends StatefulWidget {
-  const PharmacienSettings({Key? key}) : super(key: key);
+class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
 
   @override
-  State<PharmacienSettings> createState() => _PharmacienSettingsState();
+  State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _PharmacienSettingsState extends State<PharmacienSettings> {
+class _SettingsPageState extends State<SettingsPage> {
   late UserModel _user;
 
   @override
@@ -128,89 +128,90 @@ class _PharmacienSettingsState extends State<PharmacienSettings> {
                                               const SizedBox(
                                                 height: 5,
                                               ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                                children: [
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        'Médicaments',
-                                                        style: TextStyle(
-                                                          color: Colors.grey[700],
-                                                          fontFamily: 'Nunito',
-                                                          fontSize: 25,
+                                              if (_user.role != Role.admin)
+                                                Row(
+                                                  mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                                  children: [
+                                                    Column(
+                                                      children: [
+                                                        Text(
+                                                          'Médicaments',
+                                                          style: TextStyle(
+                                                            color: Colors.grey[700],
+                                                            fontFamily: 'Nunito',
+                                                            fontSize: 25,
+                                                          ),
+                                                        ),
+                                                        FutureBuilder<int>(
+                                                          future: UserController().countUserMedicaments(),
+                                                          builder: (context, snapshot) {
+                                                            if (snapshot.connectionState == ConnectionState.waiting) {
+                                                              return const CircularProgressIndicator();
+                                                            } else {
+                                                              return Text(
+                                                                snapshot.data.toString(),
+                                                                style: const TextStyle(
+                                                                  color: Color.fromRGBO(
+                                                                      39, 105, 171, 1),
+                                                                  fontFamily: 'Nunito',
+                                                                  fontSize: 25,
+                                                                ),
+                                                              );
+                                                            }
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsets.symmetric(
+                                                        horizontal: 25,
+                                                        vertical: 8,
+                                                      ),
+                                                      child: Container(
+                                                        height: 50,
+                                                        width: 3,
+                                                        decoration: BoxDecoration(
+                                                          borderRadius:
+                                                          BorderRadius.circular(
+                                                              100),
+                                                          color: Colors.grey,
                                                         ),
                                                       ),
-                                                      FutureBuilder<int>(
-                                                        future: UserController().countUserMedicaments(),
-                                                        builder: (context, snapshot) {
-                                                          if (snapshot.connectionState == ConnectionState.waiting) {
-                                                            return const CircularProgressIndicator();
-                                                          } else {
-                                                            return Text(
-                                                              snapshot.data.toString(),
-                                                              style: const TextStyle(
-                                                                color: Color.fromRGBO(
-                                                                    39, 105, 171, 1),
-                                                                fontFamily: 'Nunito',
-                                                                fontSize: 25,
-                                                              ),
-                                                            );
-                                                          }
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                    const EdgeInsets.symmetric(
-                                                      horizontal: 25,
-                                                      vertical: 8,
                                                     ),
-                                                    child: Container(
-                                                      height: 50,
-                                                      width: 3,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                        BorderRadius.circular(
-                                                            100),
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        'Commandes',
-                                                        style: TextStyle(
-                                                          color: Colors.grey[700],
-                                                          fontFamily: 'Nunito',
-                                                          fontSize: 25,
+                                                    Column(
+                                                      children: [
+                                                        Text(
+                                                          'Commandes',
+                                                          style: TextStyle(
+                                                            color: Colors.grey[700],
+                                                            fontFamily: 'Nunito',
+                                                            fontSize: 25,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      FutureBuilder<int>(
-                                                        future: UserController().countUserOrders(),
-                                                        builder: (context, snapshot) {
-                                                          if (snapshot.connectionState == ConnectionState.waiting) {
-                                                            return const CircularProgressIndicator();
-                                                          } else {
-                                                            return Text(
-                                                              snapshot.data.toString(),
-                                                              style: const TextStyle(
-                                                                color: Color.fromRGBO(
-                                                                    39, 105, 171, 1),
-                                                                fontFamily: 'Nunito',
-                                                                fontSize: 25,
-                                                              ),
-                                                            );
-                                                          }
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              )
+                                                        FutureBuilder<int>(
+                                                          future: UserController().countUserOrders(),
+                                                          builder: (context, snapshot) {
+                                                            if (snapshot.connectionState == ConnectionState.waiting) {
+                                                              return const CircularProgressIndicator();
+                                                            } else {
+                                                              return Text(
+                                                                snapshot.data.toString(),
+                                                                style: const TextStyle(
+                                                                  color: Color.fromRGBO(
+                                                                      39, 105, 171, 1),
+                                                                  fontFamily: 'Nunito',
+                                                                  fontSize: 25,
+                                                                ),
+                                                              );
+                                                            }
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                )
                                             ],
                                           ),
                                         ),

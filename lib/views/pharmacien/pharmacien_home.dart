@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_help.dart';
-import 'package:pharmacy_management/views/pharmacien/pharmacien_messages.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_orders.dart';
-import 'package:pharmacy_management/views/pharmacien/pharmacien_settings.dart';
+import 'package:pharmacy_management/views/common/settings_page.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_stock.dart';
 import '../../constants.dart';
 import '../../models/navbar_model.dart';
+import 'chat_pharmacien_list.dart';
 import '../widgets/custom_paint.dart';
 
 class PharmacienHome extends StatefulWidget {
@@ -21,9 +21,9 @@ class _PharmacienHomeState extends State<PharmacienHome> {
   final List<Widget> _pages = [
     const PharmacienStock(),
     const PharmacienOrders(),
-    const PharmacienMessages(),
+    const PharmacienChatList(),
     const PharmacienHelp(),
-    const PharmacienSettings(),
+    const SettingsPage(),
   ];
 
   @override

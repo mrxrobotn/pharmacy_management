@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../questions_page.dart';
+import 'questions_page.dart';
 
 
 class PharmacienHelp extends StatefulWidget {

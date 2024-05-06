@@ -24,3 +24,9 @@ List<NavBarModel> clientNavBar = [
   NavBarModel(id: 2, imagePath: 'assets/icons/chats.png', name: 'Aide'),
   NavBarModel(id: 3, imagePath: 'assets/icons/user.png', name: 'Profile'),
 ];
+
+List<NavBarModel> adminNavBar = [
+  NavBarModel(id: 0, imagePath: 'assets/icons/lists.png', name: 'Utilisateurs'),
+  NavBarModel(id: 1, imagePath: 'assets/icons/add-user.png', name: 'Ajouter'),
+  NavBarModel(id: 2, imagePath: 'assets/icons/user.png', name: 'Profile'),
+];

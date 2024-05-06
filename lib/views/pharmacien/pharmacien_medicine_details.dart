@@ -47,7 +47,6 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
     expirationController.text = widget.expiration;
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,74 +82,78 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
                     Container(
                       margin: const EdgeInsets.only(bottom: 50),
                       decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: [Color(0xff0043ba), Color(0xff006df1)]),
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(50),
-                            bottomRight: Radius.circular(50),
-                          ),
+                        gradient: const LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [Color(0xff0043ba), Color(0xff006df1)]),
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(50),
+                          bottomRight: Radius.circular(50),
+                        ),
                         image: DecorationImage(
                             fit: BoxFit.cover,
-                            image: NetworkImage(widget.thumbnail)
-                        ),
+                            image: NetworkImage(widget.thumbnail)),
                       ),
                     ),
                   ],
-                )
-            ),
+                )),
             Expanded(
               flex: 3,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    Text(
-                      widget.name,
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                child: SingleChildScrollView(
+                  child: SizedBox(
+                    height: MediaQuery.sizeOf(context).height,
+                    width: MediaQuery.sizeOf(context).width,
+                    child: Column(
                       children: [
-                        FloatingActionButton.extended(
-                          onPressed: () async {
-                            await confirmUpdate(context);
-                          },
-                          heroTag: 'update',
-                          elevation: 0,
-                          label: const Text("Modifier"),
-                          icon: const Icon(Icons.edit),
+                        Text(
+                          widget.name,
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(width: 16.0),
-                        FloatingActionButton.extended(
-                          onPressed: () async {
-                            await confirmDelete(context);
-                          },
-                          heroTag: 'delete',
-                          elevation: 0,
-                          backgroundColor: Colors.red,
-                          label: const Text("Supprimer"),
-                          icon: const Icon(Icons.delete),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FloatingActionButton.extended(
+                              onPressed: () async {
+                                await confirmUpdate(context);
+                              },
+                              heroTag: 'update',
+                              elevation: 0,
+                              label: const Text("Modifier"),
+                              icon: const Icon(Icons.edit),
+                            ),
+                            const SizedBox(width: 16.0),
+                            FloatingActionButton.extended(
+                              onPressed: () async {
+                                await confirmDelete(context);
+                              },
+                              heroTag: 'delete',
+                              elevation: 0,
+                              backgroundColor: Colors.red,
+                              label: const Text("Supprimer"),
+                              icon: const Icon(Icons.delete),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      height: double.maxFinite,
-                      constraints: const BoxConstraints(maxWidth: 400),
-                      child: Column(
-                        children: [
-                          Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                        const SizedBox(height: 16),
+                        Container(
+                          height: MediaQuery.sizeOf(context).height,
+                          constraints: const BoxConstraints(maxWidth: 400),
+                          child: Column(
+                            children: [
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    Expanded(
+                                        child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Padding(
                                           padding: EdgeInsets.all(8.0),
@@ -170,12 +173,13 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
                                         )
                                       ],
                                     )),
-                                const VerticalDivider(
-                                  thickness: 2,
-                                ),
-                                Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                    const VerticalDivider(
+                                      thickness: 2,
+                                    ),
+                                    Expanded(
+                                        child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       children: [
                                         const Padding(
                                           padding: EdgeInsets.all(8.0),
@@ -195,28 +199,27 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
                                         )
                                       ],
                                     )),
-                              ]
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'Description',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 20,
+                                  ]),
+                              const Padding(
+                                padding: EdgeInsets.all(8.0),
+                                child: Text(
+                                  'Description',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20,
+                                  ),
+                                ),
                               ),
-                            ),
+                              Text(
+                                widget.description,
+                                style: Theme.of(context).textTheme.bodySmall,
+                              )
+                            ],
                           ),
-                          Text(
-                            widget.description,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall,
-                          )
-                        ],
-                      ),
-                    )
-                  ],
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -287,23 +290,30 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
               TextField(
                 keyboardType: TextInputType.name,
                 controller: nameController,
-                decoration: const InputDecoration(labelText: 'Nom'),
+                decoration: const InputDecoration(
+                    labelText: 'Nom', border: OutlineInputBorder()),
               ),
+              const SizedBox(height: 15),
               TextField(
                 keyboardType: TextInputType.multiline,
                 controller: descriptionController,
-                decoration: const InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(
+                    labelText: 'Description', border: OutlineInputBorder()),
               ),
+              const SizedBox(height: 15),
               TextField(
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 controller: priceController,
-                decoration: const InputDecoration(labelText: 'Prix'),
+                decoration: const InputDecoration(
+                    labelText: 'Prix', border: OutlineInputBorder()),
               ),
+              const SizedBox(height: 15),
               TextField(
                 keyboardType: TextInputType.number,
                 controller: quantityController,
-                decoration: const InputDecoration(labelText: 'Quantité'),
+                decoration: const InputDecoration(
+                    labelText: 'Quantité', border: OutlineInputBorder()),
               ),
             ],
           ),

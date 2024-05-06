@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../controllers/question_controller.dart';
-import '../controllers/user_controller.dart';
-import '../functions.dart';
-import '../models/question_model.dart';
-import '../models/user_model.dart';
+import '../../controllers/user_controller.dart';
+import '../../functions.dart';
+import '../../models/user_model.dart';
 
 class QuestionsPage extends StatefulWidget {
   @override

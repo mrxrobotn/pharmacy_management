@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacy_management/constants.dart';
+import 'package:pharmacy_management/views/common/settings_page.dart';
 import '../../models/navbar_model.dart';
+import 'chat_patients_list.dart';
 import '../widgets/custom_paint.dart';
-import 'client_messages.dart';
+import '../pharmacien/chat_pharmacien_list.dart';
 
 class ClientHome extends StatefulWidget {
   const ClientHome({super.key});
@@ -16,9 +18,9 @@ class _ClientHomeState extends State<ClientHome> {
 
   final List<Widget> _pages = [
     const Placeholder(),
-    const ClientMessages(),
+    const PatientChatList(),
     const Placeholder(),
-    const Placeholder(),
+    const SettingsPage(),
   ];
 
   @override

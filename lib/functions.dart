@@ -7,8 +7,11 @@ enum Role { admin, client, pharmacien, fournisseur }
 // User
 User? user = FirebaseAuth.instance.currentUser;
 String? userUID = user?.uid;
-String? getUsername = FirebaseAuth.instance.currentUser?.displayName;
-String? getEmail = FirebaseAuth.instance.currentUser?.email;
+String? getUsername = user?.displayName;
+String? getEmail = user?.email;
+
+//
+Timestamp timestamp = Timestamp.now();
 
 // Firestore Collections
 CollectionReference users = FirebaseFirestore.instance.collection("users");

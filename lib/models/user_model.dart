@@ -3,10 +3,10 @@ import '../functions.dart';
 
 class UserModel with ChangeNotifier {
   final String uid;
-  final String email;
-  final String name;
-  final Role role;
-  final bool canAccess;
+  late final String email;
+  late final String name;
+  late final Role role;
+  late final bool canAccess;
   final String thumbnail;
   String? telephone;
   String? address;

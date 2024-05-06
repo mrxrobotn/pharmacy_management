@@ -7,6 +7,32 @@ class UserController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  Future<List<UserModel>> getAllUsers() async {
+    try {
+      QuerySnapshot querySnapshot =
+      await users.where('role', isNotEqualTo: 'admin').get();
+      List<UserModel> allusers = querySnapshot.docs.map((doc) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        return UserModel(
+          uid: data['uid'],
+          email: data['email'],
+          name: data['name'],
+          role: Role.values.firstWhere(
+                  (role) => role.toString() == 'Role.${data['role']}'),
+          canAccess: data['canAccess'],
+          thumbnail: data['thumbnail'],
+          address: data['address'],
+          telephone: data['telephone'],
+          schedule: data['schedule'],
+        );
+      }).toList();
+      return allusers;
+    } catch (e) {
+      print('Error getting all users: $e');
+      return [];
+    }
+  }
+
   Future<void> saveUserToFirestore(UserModel user) async {
     try {
       User? firebaseUser = _auth.currentUser;
@@ -133,5 +159,9 @@ class UserController {
       print('Error updating user in Firestore: $e');
       rethrow; // Rethrow the error for handling in UI if needed
     }
+  }
+
+  Future<void> deleteUser(String id) async {
+    await users.doc(id).delete();
   }
 }

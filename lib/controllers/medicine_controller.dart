@@ -21,6 +21,7 @@ class MedicineController {
         ownerUID: doc['ownerUID'],
         thumbnail: doc['thumbnail'],
         expiration: doc['expiration'],
+        availability: doc['availability'],
       ))
           .toList();
       return medicineList;
@@ -41,6 +42,7 @@ class MedicineController {
         'thumbnail': medicine.thumbnail,
         'expiration': medicine.expiration,
         'description': medicine.description,
+        'availability': medicine.availability,
       });
 
       // Retrieve the ID of the newly created document
@@ -65,6 +67,7 @@ class MedicineController {
         'thumbnail': updatedMedicine.thumbnail,
         'expiration': updatedMedicine.expiration,
         'description': updatedMedicine.description,
+        'availability': updatedMedicine.availability,
       });
     } catch (e) {
       print('Error updating data: $e');

@@ -6,6 +6,7 @@ import '../../controllers/cart_provider.dart';
 import 'package:badges/badges.dart' as badges;
 
 import '../../models/medicine_model.dart';
+import 'grid_item_details.dart';
 import 'shop_cart_details.dart';
 
 class ClientShopPage extends StatefulWidget {
@@ -41,6 +42,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +102,7 @@ class _HomeState extends State<Home> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Text(
-                    "Tous les médicamentsa",
+                    "Tous les médicaments",
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(
@@ -141,7 +143,14 @@ class _HomeState extends State<Home> {
                                 itemBuilder: (context, index) {
                                   var product = data[index];
                                   return InkWell(
-                                      onTap: () {},
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) => GridItemDetails(medicine: product),
+                                            ),
+                                          );
+                                      },
                                       child: ProductGridItem(medicine: product));
                                 },
                               );
@@ -150,7 +159,6 @@ class _HomeState extends State<Home> {
                             return const Center(child: CircularProgressIndicator());
                           }
                         }
-
                         return const Text("Aucun produit trouvé");
                       },
                     ),

@@ -5,6 +5,8 @@ import '../../functions.dart';
 import '../../models/user_model.dart';
 
 class QuestionsPage extends StatefulWidget {
+  const QuestionsPage({super.key});
+
   @override
   State<QuestionsPage> createState() => _QuestionsPageState();
 }

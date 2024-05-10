@@ -43,6 +43,7 @@ class UserController {
           'name': user.name,
           'role': user.role.toString().split('.').last, // Store role as string
           'canAccess': user.canAccess,
+          'thumbnail': user.thumbnail,
         });
       }
     } catch (e) {
@@ -163,5 +164,28 @@ class UserController {
 
   Future<void> deleteUser(String id) async {
     await users.doc(id).delete();
+  }
+
+  Future<String?> getUserUidByEmail(String email) async {
+    try {
+      QuerySnapshot querySnapshot = await users
+          .where('email', isEqualTo: email)
+          .get();
+
+      if (querySnapshot.size == 1) {
+        return querySnapshot.docs.first.id;
+      } else if (querySnapshot.size > 1) {
+        // This should not happen, but handle multiple users found with same email
+        print('Multiple users found with email $email');
+        return null;
+      } else {
+        // User not found with the given email
+        print('User not found with email $email');
+        return null;
+      }
+    } catch (e) {
+      print('Error getting user UID by email: $e');
+      return null;
+    }
   }
 }

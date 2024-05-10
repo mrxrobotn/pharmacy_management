@@ -26,30 +26,13 @@ class _PharmacienHelpState extends State<PharmacienHelp> {
                     fontWeight: FontWeight.bold, fontSize: 20),
               ),
               subtitle: Text(
-                "Répondre à des questions ou les ordonnances posés par les patients",
+                "Répondre à des questions posés par les patients",
                 textAlign: TextAlign.center,
               ),
             ),
           ),
-          bottom: const TabBar(
-            tabs: [
-              Tab(
-                icon: Icon(Icons.question_mark),
-                child: Text('Questions'),
-              ),
-              Tab(
-                  icon: Icon(Icons.question_answer),
-                  child: Text('Ordonnences')
-              ),
-            ],
-          ),
         ),
-        body: TabBarView(
-          children: [
-            QuestionsPage(),
-            Placeholder()
-          ],
-        ),
+        body: const QuestionsPage(),
       ),
     );
   }

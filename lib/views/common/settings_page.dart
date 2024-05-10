@@ -21,291 +21,297 @@ class _SettingsPageState extends State<SettingsPage> {
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
 
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                kBlue,
-                Color.fromRGBO(39, 105, 171, 1),
-              ],
-              begin: FractionalOffset.bottomCenter,
-              end: FractionalOffset.topCenter,
-            ),
-          ),
-        ),
-        Scaffold(
-          backgroundColor: Colors.transparent,
-          body: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical:10),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      const Spacer(),
-                      MenuAnchor(
-                        builder: (context, controller, child) {
-                          return IconButton(
-                            onPressed: () {
-                              if (controller.isOpen) {
-                                controller.close();
-                              } else {
-                                controller.open();
-                              }
-                            },
-                            icon: const Icon(Icons.more_vert, size: 30, color: kWhite,),
-                          );
-                        },
-                        menuChildren: [
-                          MenuItemButton(
-                            child: const Text('Déconnexion'),
-                            onPressed: (){
-                              FirebaseAuth.instance.signOut();
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                              );
-                            },
-                          ),
-                          MenuItemButton(
-                            child: const Text('Changer le mot de passe'),
-                            onPressed: () {
-
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  FutureBuilder(
-                    future: UserController().getUserDataById(userUID!),
-                    builder: (context, AsyncSnapshot<UserModel?> userSnapshot) {
-                      if (userSnapshot.connectionState == ConnectionState.waiting) {
-                        return const CircularProgressIndicator();
-                      }
-                      if (userSnapshot.hasData && userSnapshot.data != null) {
-                        _user = userSnapshot.data!;
-                        return Column(
-                          children: [
-                            SizedBox(
-                              height: height * 0.43,
-                              child: LayoutBuilder(
-                                builder: (context, constraints) {
-                                  double innerHeight = constraints.maxHeight;
-                                  double innerWidth = constraints.maxWidth;
-                                  return Stack(
-                                    fit: StackFit.expand,
-                                    children: [
-                                      Positioned(
-                                        bottom: 0,
-                                        left: 0,
-                                        right: 0,
-                                        child: Container(
-                                          height: innerHeight * 0.72,
-                                          width: innerWidth,
-                                          decoration: BoxDecoration(
-                                            borderRadius: BorderRadius.circular(30),
-                                            color: Colors.white,
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              const SizedBox(
-                                                height: 80,
-                                              ),
-                                              Text(
-                                                _user.name,
-                                                style: const TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      39, 105, 171, 1),
-                                                  fontFamily: 'Nunito',
-                                                  fontSize: 37,
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                height: 5,
-                                              ),
-                                              if (_user.role == Role.pharmacien)
-                                                Row(
-                                                  mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                                  children: [
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                          'Médicaments',
-                                                          style: TextStyle(
-                                                            color: Colors.grey[700],
-                                                            fontFamily: 'Nunito',
-                                                            fontSize: 25,
-                                                          ),
-                                                        ),
-                                                        FutureBuilder<int>(
-                                                          future: UserController().countUserMedicaments(),
-                                                          builder: (context, snapshot) {
-                                                            if (snapshot.connectionState == ConnectionState.waiting) {
-                                                              return const CircularProgressIndicator();
-                                                            } else {
-                                                              return Text(
-                                                                snapshot.data.toString(),
-                                                                style: const TextStyle(
-                                                                  color: Color.fromRGBO(
-                                                                      39, 105, 171, 1),
-                                                                  fontFamily: 'Nunito',
-                                                                  fontSize: 25,
-                                                                ),
-                                                              );
-                                                            }
-                                                          },
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                      const EdgeInsets.symmetric(
-                                                        horizontal: 25,
-                                                        vertical: 8,
-                                                      ),
-                                                      child: Container(
-                                                        height: 50,
-                                                        width: 3,
-                                                        decoration: BoxDecoration(
-                                                          borderRadius:
-                                                          BorderRadius.circular(
-                                                              100),
-                                                          color: Colors.grey,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Column(
-                                                      children: [
-                                                        Text(
-                                                          'Commandes',
-                                                          style: TextStyle(
-                                                            color: Colors.grey[700],
-                                                            fontFamily: 'Nunito',
-                                                            fontSize: 25,
-                                                          ),
-                                                        ),
-                                                        FutureBuilder<int>(
-                                                          future: UserController().countUserOrders(),
-                                                          builder: (context, snapshot) {
-                                                            if (snapshot.connectionState == ConnectionState.waiting) {
-                                                              return const CircularProgressIndicator();
-                                                            } else {
-                                                              return Text(
-                                                                snapshot.data.toString(),
-                                                                style: const TextStyle(
-                                                                  color: Color.fromRGBO(
-                                                                      39, 105, 171, 1),
-                                                                  fontFamily: 'Nunito',
-                                                                  fontSize: 25,
-                                                                ),
-                                                              );
-                                                            }
-                                                          },
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 110,
-                                        right: 20,
-                                        child: IconButton(
-                                          icon: Icon(
-                                            Icons.edit,
-                                            color: Colors.grey[700],
-                                            size: 30,
-                                          ),
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(builder: (context) => EditUserInfoScreen(user: _user)),
-                                            ).then((value) {
-                                              if (value == true) {
-                                                setState(() {});
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      Positioned(
-                                        top: 0,
-                                        left: 0,
-                                        right: 0,
-                                        child: Center(
-                                          child: Image.network(
-                                            _user.thumbnail,
-                                            width: innerWidth * 0.45,
-                                            fit: BoxFit.fitWidth,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Container(
-                              height: height * 0.5,
-                              width: width,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(30),
-                                color: Colors.white,
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 15),
-                                child: Column(
-                                  children: [
-                                    const SizedBox(
-                                      height: 20,
-                                    ),
-                                    const Text(
-                                      'Mes informations',
-                                      style: TextStyle(
-                                        color: Color.fromRGBO(39, 105, 171, 1),
-                                        fontSize: 27,
-                                        fontFamily: 'Nunito',
-                                      ),
-                                    ),
-                                    const Divider(
-                                      thickness: 2.5,
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    _buildUserInfoField('Email', _user.email),
-                                    _buildUserInfoField('Tél', _user.telephone ?? 'Non défini'),
-                                    _buildUserInfoField('Addresse', _user.address ?? 'Non défini'),
-                                    _buildUserInfoField('Heures d\'ouverture', _user.schedule ?? 'Non défini'),
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        );
-                      } else {
-                        return const SizedBox();
-                      }
-                    },
-                  ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Paramètres'),
+      ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  kBlue,
+                  Color.fromRGBO(39, 105, 171, 1),
                 ],
+                begin: FractionalOffset.bottomCenter,
+                end: FractionalOffset.topCenter,
               ),
             ),
           ),
-        )
-      ],
+          Scaffold(
+            backgroundColor: Colors.transparent,
+            body: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical:10),
+                child: Column(
+                  children: [
+                    Row(
+                      children: [
+                        const Spacer(),
+                        MenuAnchor(
+                          builder: (context, controller, child) {
+                            return IconButton(
+                              onPressed: () {
+                                if (controller.isOpen) {
+                                  controller.close();
+                                } else {
+                                  controller.open();
+                                }
+                              },
+                              icon: const Icon(Icons.more_vert, size: 30, color: kWhite,),
+                            );
+                          },
+                          menuChildren: [
+                            MenuItemButton(
+                              child: const Text('Déconnexion'),
+                              onPressed: () {
+                                FirebaseAuth.instance.signOut();
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                      (Route<dynamic> route) => false, // Remove all routes until the new route is pushed
+                                );
+                              },
+                            ),
+                            MenuItemButton(
+                              child: const Text('Changer le mot de passe'),
+                              onPressed: () {
+
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    FutureBuilder(
+                      future: UserController().getUserDataById(userUID!),
+                      builder: (context, AsyncSnapshot<UserModel?> userSnapshot) {
+                        if (userSnapshot.connectionState == ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (userSnapshot.hasData && userSnapshot.data != null) {
+                          _user = userSnapshot.data!;
+                          return Column(
+                            children: [
+                              SizedBox(
+                                height: height * 0.43,
+                                child: LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    double innerHeight = constraints.maxHeight;
+                                    double innerWidth = constraints.maxWidth;
+                                    return Stack(
+                                      fit: StackFit.expand,
+                                      children: [
+                                        Positioned(
+                                          bottom: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Container(
+                                            height: innerHeight * 0.72,
+                                            width: innerWidth,
+                                            decoration: BoxDecoration(
+                                              borderRadius: BorderRadius.circular(30),
+                                              color: Colors.white,
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                const SizedBox(
+                                                  height: 80,
+                                                ),
+                                                Text(
+                                                  _user.name,
+                                                  style: const TextStyle(
+                                                    color: Color.fromRGBO(
+                                                        39, 105, 171, 1),
+                                                    fontFamily: 'Nunito',
+                                                    fontSize: 37,
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  height: 5,
+                                                ),
+                                                if (_user.role == Role.pharmacien)
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                    children: [
+                                                      Column(
+                                                        children: [
+                                                          Text(
+                                                            'Médicaments',
+                                                            style: TextStyle(
+                                                              color: Colors.grey[700],
+                                                              fontFamily: 'Nunito',
+                                                              fontSize: 25,
+                                                            ),
+                                                          ),
+                                                          FutureBuilder<int>(
+                                                            future: UserController().countUserMedicaments(),
+                                                            builder: (context, snapshot) {
+                                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                return const CircularProgressIndicator();
+                                                              } else {
+                                                                return Text(
+                                                                  snapshot.data.toString(),
+                                                                  style: const TextStyle(
+                                                                    color: Color.fromRGBO(
+                                                                        39, 105, 171, 1),
+                                                                    fontFamily: 'Nunito',
+                                                                    fontSize: 25,
+                                                                  ),
+                                                                );
+                                                              }
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 25,
+                                                          vertical: 8,
+                                                        ),
+                                                        child: Container(
+                                                          height: 50,
+                                                          width: 3,
+                                                          decoration: BoxDecoration(
+                                                            borderRadius:
+                                                            BorderRadius.circular(
+                                                                100),
+                                                            color: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Column(
+                                                        children: [
+                                                          Text(
+                                                            'Commandes',
+                                                            style: TextStyle(
+                                                              color: Colors.grey[700],
+                                                              fontFamily: 'Nunito',
+                                                              fontSize: 25,
+                                                            ),
+                                                          ),
+                                                          FutureBuilder<int>(
+                                                            future: UserController().countUserOrders(),
+                                                            builder: (context, snapshot) {
+                                                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                                                return const CircularProgressIndicator();
+                                                              } else {
+                                                                return Text(
+                                                                  snapshot.data.toString(),
+                                                                  style: const TextStyle(
+                                                                    color: Color.fromRGBO(
+                                                                        39, 105, 171, 1),
+                                                                    fontFamily: 'Nunito',
+                                                                    fontSize: 25,
+                                                                  ),
+                                                                );
+                                                              }
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  )
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 110,
+                                          right: 20,
+                                          child: IconButton(
+                                            icon: Icon(
+                                              Icons.edit,
+                                              color: Colors.grey[700],
+                                              size: 30,
+                                            ),
+                                            onPressed: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(builder: (context) => EditUserInfoScreen(user: _user)),
+                                              ).then((value) {
+                                                if (value == true) {
+                                                  setState(() {});
+                                                }
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 0,
+                                          left: 0,
+                                          right: 0,
+                                          child: Center(
+                                            child: Image.network(
+                                              _user.thumbnail,
+                                              width: innerWidth * 0.45,
+                                              fit: BoxFit.fitWidth,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              Container(
+                                height: height * 0.5,
+                                width: width,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Colors.white,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                                  child: Column(
+                                    children: [
+                                      const SizedBox(
+                                        height: 20,
+                                      ),
+                                      const Text(
+                                        'Mes informations',
+                                        style: TextStyle(
+                                          color: Color.fromRGBO(39, 105, 171, 1),
+                                          fontSize: 27,
+                                          fontFamily: 'Nunito',
+                                        ),
+                                      ),
+                                      const Divider(
+                                        thickness: 2.5,
+                                      ),
+                                      const SizedBox(
+                                        height: 10,
+                                      ),
+                                      _buildUserInfoField('Email', _user.email),
+                                      _buildUserInfoField('Tél', _user.telephone ?? 'Non défini'),
+                                      _buildUserInfoField('Addresse', _user.address ?? 'Non défini'),
+                                      _buildUserInfoField('Heures d\'ouverture', _user.schedule ?? 'Non défini'),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          );
+                        } else {
+                          return const SizedBox();
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+        ],
+      ),
     );
   }
 

@@ -180,7 +180,7 @@ class _CartDetailsState extends State<CartDetails> {
                               Row(
                                 children: [
                                   Text(
-                                    'Pris total:',
+                                    'Prix total:',
                                     style:
                                     Theme.of(context).textTheme.titleMedium,
                                   ),

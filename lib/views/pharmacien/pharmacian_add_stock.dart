@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:pharmacy_management/functions.dart';
 import 'package:pharmacy_management/models/medicine_model.dart';
 
 import '../../constants.dart';
@@ -24,6 +25,8 @@ class _AddMedecinesPageState extends State<AddMedecinesPage> {
   TextEditingController expirationController = TextEditingController();
   File? _selectedImage;
   DateTime selectedDate = DateTime.now();
+
+  Status _selectedStatus = Status.En_stock;
 
   Future<void> _pickImage() async {
     final imagePicker = ImagePicker();
@@ -226,7 +229,34 @@ class _AddMedecinesPageState extends State<AddMedecinesPage> {
                     ],
                   )
                 ),
-
+                const SizedBox(height: kDefaultPadding),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Disponibilité: ',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const Spacer(),
+                    DropdownButton<Status>(
+                      value: _selectedStatus,
+                      items: Status.values.map((status) {
+                        return DropdownMenuItem<Status>(
+                          value: status,
+                          child: Text(status.toString().split('.')[1]),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedStatus = value!;
+                        });
+                      },
+                    ),
+                    const Spacer(),
+                  ],
+                ),
                 const SizedBox(height: kDefaultPadding),
 
                 ElevatedButton(
@@ -246,6 +276,7 @@ class _AddMedecinesPageState extends State<AddMedecinesPage> {
                           ownerUID: '',
                           thumbnail: imageUrl,
                           expiration: expirationController.text,
+                          availability: _selectedStatus.toString().split('.')[1],
                         );
                         await MedicineController().addMedicine(medicine);
 

@@ -5,6 +5,7 @@ import '../../models/navbar_model.dart';
 import 'chat_patients_list.dart';
 import '../widgets/custom_paint.dart';
 import '../pharmacien/chat_pharmacien_list.dart';
+import 'client_questions.dart';
 import 'client_shop_page.dart';
 
 class ClientHome extends StatefulWidget {
@@ -20,7 +21,7 @@ class _ClientHomeState extends State<ClientHome> {
   final List<Widget> _pages = [
     const ClientShopPage(),
     const PatientChatList(),
-    const Placeholder(),
+    const ClientsQuestions(),
     const SettingsPage(),
   ];
 

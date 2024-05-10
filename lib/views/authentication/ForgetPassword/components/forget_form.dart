@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../constants.dart';
 import '../../../../controllers/auth_response.dart';
 import '../../../../controllers/authentication_service.dart';
-import '../../../../functions.dart';
 import '../../Login/login_screen.dart';
 
 class ForgetForm extends StatelessWidget {
@@ -11,6 +10,8 @@ class ForgetForm extends StatelessWidget {
   });
 
   final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController email = TextEditingController();
 
   @override
   Widget build(BuildContext context) {

@@ -27,6 +27,11 @@ class _SignUpFormState extends State<SignUpForm> {
   final TextEditingController _roleController = TextEditingController();
   Role _selectedRole = Role.client;
   File? _selectedImage;
+  final TextEditingController username = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  late Role role;
+  bool canAccess = false;
 
   Future<void> _pickImage() async {
     final imagePicker = ImagePicker();
@@ -70,6 +75,10 @@ class _SignUpFormState extends State<SignUpForm> {
       key: _formKey,
       child: Column(
         children: <Widget> [
+          const Center(
+            child: Text('Choisir une photo de profile'),
+          ),
+          const SizedBox(height: kDefaultPadding,),
           GestureDetector(
             onTap: _pickImage,
             child: Container(
@@ -206,7 +215,7 @@ class _SignUpFormState extends State<SignUpForm> {
                 String un = username.text;
                 String em = email.text;
                 String pwd = password.text;
-                String imageUrl = await _uploadImage(un);
+                String imageUrl = await _uploadImage();
 
                 if (un.isEmpty || em.isEmpty || pwd.isEmpty) {
                   print('One or more fields are empty');
@@ -272,9 +281,12 @@ class _SignUpFormState extends State<SignUpForm> {
     );
   }
 
-  Future<String> _uploadImage(String fileName) async {
+  Future<String> _uploadImage() async {
     try {
       if (_selectedImage != null) {
+
+        // Generate a unique filename for the image
+        String fileName = DateTime.now().millisecondsSinceEpoch.toString();
 
         // Upload image to Firebase Storage
         firebase_storage.Reference ref = firebase_storage.FirebaseStorage.instance

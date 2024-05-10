@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import '../../../../constants.dart';
 import '../../../../controllers/auth_response.dart';
 import '../../../../controllers/authentication_service.dart';
+import '../../../../controllers/user_controller.dart';
 import '../../../../functions.dart';
-import '../../../pharmacien/pharmacien_home.dart';
+import '../../../../main.dart';
 import '../../../widgets/already_have_an_account_acheck.dart';
 import '../../ForgetPassword/forget_screen.dart';
 import '../../Signup/signup_screen.dart';
@@ -21,6 +22,8 @@ class LoginForm extends StatefulWidget {
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
 
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -131,19 +134,39 @@ class _LoginFormState extends State<LoginForm> {
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
                   AuthenticationService()
-                      .signInWithEmail(
-                      email: email.text,
-                      password: password.text)
+                      .signInWithEmail(email: email.text, password: password.text)
                       .then((authResponse) async {
                     if (authResponse.authStatus == AuthStatus.success) {
-                      Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const PharmacienHome()),
-                              (route) => false);
-                    }  else {
-                      Util.showErrorMessage(
-                          context, authResponse.message);
+                      String? uid = await UserController().getUserUidByEmail(email.text);
+                      await users.doc(uid).get().then((value) {
+                        if (value['role'] == 'admin') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Admin()),
+                          );
+                        }
+                        if (value['role'] == 'pharmacien') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Pharmacien()),
+                          );
+                        }
+                        if (value['role'] == 'client') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Client()),
+                          );
+                        }
+                        if (value['role'] == 'fournisseur') {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const Fournisseur()),
+                          );
+                        }
+                        print(value['role']);
+                      });
+                    } else {
+                      Util.showErrorMessage(context, authResponse.message);
                     }
                   });
                 }
@@ -171,3 +194,5 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 }
+
+

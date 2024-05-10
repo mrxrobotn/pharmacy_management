@@ -120,6 +120,7 @@ class _PharmacienStockState extends State<PharmacienStock> {
                                 quantity: documentSnapshot['quantity'].toString(),
                                 thumbnail: documentSnapshot['thumbnail'],
                                 expiration: documentSnapshot['expiration'],
+                                availability: documentSnapshot['availability'],
                               ),
                             ));
                           },

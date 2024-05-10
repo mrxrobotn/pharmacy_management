@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 
 import '../../constants.dart';
 import '../../controllers/cart_provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 
 class ProductGridItem extends StatefulWidget {
@@ -33,8 +32,8 @@ class _ProductGridItemState extends State<ProductGridItem> {
       child: ListView(
         physics: const NeverScrollableScrollPhysics(),
         children: [
-          const Padding(
-            padding: EdgeInsets.only(
+          Padding(
+            padding: const EdgeInsets.only(
               right: 8,
               top: 8,
             ),
@@ -42,8 +41,8 @@ class _ProductGridItemState extends State<ProductGridItem> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 Text(
-                  'En stock',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFEF7532)),
+                  widget.medicine.availability,
+                  style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFEF7532)),
                 )
               ],
             ),

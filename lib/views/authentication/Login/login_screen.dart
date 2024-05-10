@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pharmacy_management/themes.dart';
 import '../../widgets/responsive.dart';
 import '../../widgets/background.dart';
 import 'components/login_form.dart';
@@ -9,30 +10,35 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Background(
-      child: SingleChildScrollView(
-        child: Responsive(
-          mobile: MobileLoginScreen(),
-          desktop: Row(
-            children: [
-              Expanded(
-                child: LoginScreenTopImage(),
-              ),
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      width: 450,
-                      child: LoginForm(),
+    return MaterialApp(
+      home: const Scaffold(
+        body: Background(
+          child: SingleChildScrollView(
+            child: Responsive(
+              mobile: MobileLoginScreen(),
+              desktop: Row(
+                children: [
+                  Expanded(
+                    child: LoginScreenTopImage(),
+                  ),
+                  Expanded(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 450,
+                          child: LoginForm(),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
+      theme: mainTheme(context),
     );
   }
 }

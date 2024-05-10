@@ -1,7 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../controllers/cart_provider.dart';
 import '../../models/cart_item_model.dart';
 
@@ -40,14 +38,11 @@ class _CartListItemState extends State<CartListItem> {
         children: [
           ClipRRect(
             borderRadius: BorderRadius.circular(8),
-            child: CachedNetworkImage(
-              imageUrl: widget.cartItem.medicine.thumbnail,
+            child: Image.network(
+              widget.cartItem.medicine.thumbnail,
               fit: BoxFit.cover,
               width: 67,
               height: 100,
-              placeholder: (context, url) =>
-              const Center(child: CircularProgressIndicator()),
-              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
           ),
           const SizedBox(

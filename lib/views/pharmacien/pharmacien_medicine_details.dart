@@ -11,6 +11,7 @@ class PharmacienMedicineDetails extends StatefulWidget {
   final String quantity;
   final String thumbnail;
   final String expiration;
+  final String availability;
   final DocumentSnapshot documentSnapshot;
 
   const PharmacienMedicineDetails({
@@ -23,6 +24,7 @@ class PharmacienMedicineDetails extends StatefulWidget {
     required this.documentSnapshot,
     required this.thumbnail,
     required this.expiration,
+    required this.availability,
   });
 
   @override
@@ -64,7 +66,7 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
             },
           ),
           title: const Text(
-            'Descirption du produit',
+            'Description du produit',
             style: TextStyle(
               fontFamily: 'Varela',
               fontSize: 24.0,
@@ -173,6 +175,32 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
                                         )
                                       ],
                                     )),
+                                    const VerticalDivider(
+                                      thickness: 2,
+                                    ),
+                                    Expanded(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          children: [
+                                            const Padding(
+                                              padding: EdgeInsets.all(8.0),
+                                              child: Text(
+                                                'Availability',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 20,
+                                                ),
+                                              ),
+                                            ),
+                                            Text(
+                                              widget.availability,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodySmall,
+                                            )
+                                          ],
+                                        )),
                                     const VerticalDivider(
                                       thickness: 2,
                                     ),

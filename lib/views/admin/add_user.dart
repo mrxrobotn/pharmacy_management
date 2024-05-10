@@ -9,8 +9,6 @@ import '../../controllers/authentication_service.dart';
 import '../../controllers/user_controller.dart';
 import '../../functions.dart';
 import '../../models/user_model.dart';
-import '../authentication/Signup/components/signup_form.dart';
-import '../authentication/Signup/components/signup_top_image.dart';
 import '../widgets/background.dart';
 import 'dart:io';
 
@@ -26,6 +24,12 @@ class _AddUserPageState extends State<AddUserPage> {
   final TextEditingController _roleController = TextEditingController();
   Role _selectedRole = Role.client;
   File? _selectedImage;
+
+  final TextEditingController username = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+  late Role role;
+  bool canAccess = false;
 
   Future<void> _pickImage() async {
     final imagePicker = ImagePicker();

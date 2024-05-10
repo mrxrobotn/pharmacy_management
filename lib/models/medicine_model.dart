@@ -9,6 +9,7 @@ class MedicineModel with ChangeNotifier {
   final String ownerUID;
   final String thumbnail;
   final String expiration;
+  final String availability;
 
   MedicineModel({
     required this.uid,
@@ -19,5 +20,6 @@ class MedicineModel with ChangeNotifier {
     required this.ownerUID,
     required this.thumbnail,
     required this.expiration,
+    required this.availability,
   });
 }

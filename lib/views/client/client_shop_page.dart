@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmacy_management/controllers/medicine_controller.dart';
 import 'package:pharmacy_management/views/client/product_grid_item.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../controllers/cart_provider.dart';
 import 'package:badges/badges.dart' as badges;
 
+import '../../functions.dart';
 import '../../models/medicine_model.dart';
 import 'grid_item_details.dart';
 import 'shop_cart_details.dart';
@@ -43,6 +45,15 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  final TextEditingController nameController = TextEditingController();
+  bool _searching = false;
+  late Stream<QuerySnapshot> _medicinesStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _medicinesStream = medicines.snapshots();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,62 +112,75 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const Text(
-                    "Tous les médicaments",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 10,
+
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Focus(
+                      child: TextField(
+                        controller: nameController,
+                        decoration: InputDecoration(
+                          hintText: "Rechercher par nom",
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            _searching = value.isNotEmpty;
+                            _medicinesStream = _searching
+                                ? medicines
+                                .where('name', isGreaterThanOrEqualTo: value)
+                                .snapshots()
+                                : medicines.snapshots();
+                          });
+                        },
+                      ),
+                    ),
                   ),
                   Expanded(
-                    child: FutureBuilder<List<MedicineModel>>(
-                      future: MedicineController().getAllMedicines(),
-                      builder: (BuildContext context, snapshot) {
+                    child: StreamBuilder<QuerySnapshot>(
+                      stream: _medicinesStream,
+                      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(child: CircularProgressIndicator());
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.none) {
+                        } else if (snapshot.hasError) {
                           return const Center(
                             child: Text('An error occurred!'),
                           );
-                        } else if (snapshot.connectionState ==
-                            ConnectionState.done) {
-                          if (snapshot.hasData) {
-                            if (snapshot.error != null) {
-                              return const Center(
-                                child: Text('An error occurred!'),
-                              );
-                            } else {
-                              List<MedicineModel> data = snapshot.data!;
-
-                              return GridView.builder(
-                                padding: const EdgeInsets.all(4.0),
-                                itemCount: data.length,
-                                shrinkWrap: true,
-                                physics: const ScrollPhysics(),
-                                gridDelegate:
-                                const SliverGridDelegateWithMaxCrossAxisExtent(
-                                    maxCrossAxisExtent: 200,
-                                    childAspectRatio: 3 / 3.5,
-                                    crossAxisSpacing: 10,
-                                    mainAxisSpacing: 10),
-                                itemBuilder: (context, index) {
-                                  var product = data[index];
-                                  return InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (BuildContext context) => GridItemDetails(medicine: product),
-                                            ),
-                                          );
-                                      },
-                                      child: ProductGridItem(medicine: product));
-                                },
-                              );
-                            }
+                        } else if (snapshot.hasData) {
+                          if (snapshot.data!.docs.isEmpty) {
+                            return const Center(
+                              child: Text("Aucun produit trouvé"),
+                            );
                           } else {
-                            return const Center(child: CircularProgressIndicator());
+                            List<MedicineModel> data = snapshot.data!.docs.map((doc) => MedicineModel.fromSnapshot(doc)).toList();
+
+                            return GridView.builder(
+                              padding: const EdgeInsets.all(4.0),
+                              itemCount: data.length,
+                              shrinkWrap: true,
+                              physics: const ScrollPhysics(),
+                              gridDelegate:
+                              const SliverGridDelegateWithMaxCrossAxisExtent(
+                                  maxCrossAxisExtent: 200,
+                                  childAspectRatio: 3 / 3.5,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 10),
+                              itemBuilder: (context, index) {
+                                var product = data[index];
+                                return InkWell(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (BuildContext context) => GridItemDetails(medicine: product),
+                                        ),
+                                      );
+                                    },
+                                    child: ProductGridItem(medicine: product));
+                              },
+                            );
                           }
                         }
                         return const Text("Aucun produit trouvé");

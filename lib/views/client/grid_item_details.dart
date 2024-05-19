@@ -39,7 +39,7 @@ class GridItemDetails extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Nom: ${medicine.name}',
+                          medicine.availability,
                           style: const TextStyle(
                             fontSize: 15,
                             color: Colors.grey,
@@ -49,7 +49,7 @@ class GridItemDetails extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              medicine.availability,
+                            'Nom: ${medicine.name}',
                               style: const TextStyle(
                                 fontSize: 22,
                                 fontWeight: FontWeight.w600,
@@ -67,7 +67,7 @@ class GridItemDetails extends StatelessWidget {
                         const SizedBox(height: 15),
                         SizedBox(
                           width: 400,
-                          height: 200,
+                          height: 400,
                           child: ConseilsList(productUID: medicine.uid, description: medicine.description,)
                         )
                       ],

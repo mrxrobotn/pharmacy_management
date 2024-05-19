@@ -72,7 +72,7 @@ class ConseilTab extends StatelessWidget {
             itemBuilder: (context, index) {
               final DocumentSnapshot documentSnapshot = streamSnapshot.data!.docs[index];
               return FutureBuilder(
-                future: ConseilController().fetchConseilsByProductId(productUID),
+                future: ConseilController().fetchAdvicesByProductId(productUID),
                 builder: (context, AsyncSnapshot<ConseilModel?> userSnapshot) {
                   if (userSnapshot.connectionState == ConnectionState.waiting) {
                     return const CircularProgressIndicator();

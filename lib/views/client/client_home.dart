@@ -7,6 +7,7 @@ import '../widgets/custom_paint.dart';
 import '../pharmacien/chat_pharmacien_list.dart';
 import 'client_questions.dart';
 import 'client_shop_page.dart';
+import 'orders_history.dart';
 
 class ClientHome extends StatefulWidget {
   const ClientHome({super.key});
@@ -20,6 +21,7 @@ class _ClientHomeState extends State<ClientHome> {
 
   final List<Widget> _pages = [
     const ClientShopPage(),
+    const ClientOrdersHistory(),
     const PatientChatList(),
     const ClientsQuestions(),
     const SettingsPage(),

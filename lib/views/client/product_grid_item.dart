@@ -5,7 +5,6 @@ import 'package:provider/provider.dart';
 import '../../constants.dart';
 import '../../controllers/cart_provider.dart';
 
-
 class ProductGridItem extends StatefulWidget {
   final MedicineModel medicine;
   const ProductGridItem({super.key, required this.medicine});
@@ -40,10 +39,19 @@ class _ProductGridItemState extends State<ProductGridItem> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text(
-                  widget.medicine.availability,
-                  style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFEF7532)),
-                )
+                widget.medicine.quantity == 0
+                    ? const Text(
+                        'Epuisé',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFEF7532)),
+                      )
+                    : Text(
+                        widget.medicine.availability,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xFFEF7532)),
+                      )
               ],
             ),
           ),
@@ -64,9 +72,7 @@ class _ProductGridItemState extends State<ProductGridItem> {
               widget.medicine.name,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                  color: Color(0xFF575E67),
-                  fontFamily: 'Varela',
-                  fontSize: 16),
+                  color: Color(0xFF575E67), fontFamily: 'Varela', fontSize: 16),
             ),
           ),
           Padding(
@@ -93,14 +99,20 @@ class _ProductGridItemState extends State<ProductGridItem> {
                 const SizedBox(
                   width: 20,
                 ),
-                IconButton(
-                    icon: const Icon(Icons.shopping_cart),
-                    color: kPrimaryColor,
-                    iconSize: 25,
-                    onPressed: () {
-                      Provider.of<CartProvider>(context, listen: false)
-                          .addToCart(widget.medicine, 1, "");
-                    }),
+                widget.medicine.quantity == 0
+                    ? const IconButton(
+                        icon: Icon(Icons.shopping_cart),
+                        color: kPrimaryColor,
+                        iconSize: 25,
+                        onPressed: null)
+                    : IconButton(
+                        icon: const Icon(Icons.shopping_cart),
+                        color: kPrimaryColor,
+                        iconSize: 25,
+                        onPressed: () {
+                          Provider.of<CartProvider>(context, listen: false)
+                              .addToCart(widget.medicine, 1, "");
+                        }),
               ],
             ),
           ),

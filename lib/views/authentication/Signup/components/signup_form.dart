@@ -353,7 +353,6 @@ class _SignUpFormState extends State<SignUpForm> {
           const SizedBox(height: 20.0),
           _buildRoleButton(context, Role.client),
           _buildRoleButton(context, Role.pharmacien),
-          _buildRoleButton(context, Role.fournisseur),
         ],
       ),
     );

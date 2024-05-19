@@ -1,7 +1,16 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pharmacy_management/constants.dart';
+import 'package:pharmacy_management/controllers/conseil_controller.dart';
 import 'package:pharmacy_management/controllers/medicine_controller.dart';
+import 'package:pharmacy_management/controllers/stock_controller.dart';
 import 'package:pharmacy_management/functions.dart';
+import 'package:pharmacy_management/models/conseil_model.dart';
+import 'package:pharmacy_management/models/stock_model.dart';
+
+import '../client/conseils_list.dart';
 
 class PharmacienMedicineDetails extends StatefulWidget {
   final String uid;
@@ -38,6 +47,7 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
   final TextEditingController priceController = TextEditingController();
   final TextEditingController quantityController = TextEditingController();
   final TextEditingController expirationController = TextEditingController();
+  final TextEditingController adviceController = TextEditingController();
 
   @override
   void initState() {
@@ -100,7 +110,7 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
                   ],
                 )),
             Expanded(
-              flex: 3,
+              flex: 4,
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SingleChildScrollView(
@@ -122,17 +132,17 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
                           children: [
                             FloatingActionButton.extended(
                               onPressed: () async {
-                                await confirmUpdate(context);
+                                await update(context);
                               },
                               heroTag: 'update',
                               elevation: 0,
                               label: const Text("Modifier"),
                               icon: const Icon(Icons.edit),
                             ),
-                            const SizedBox(width: 16.0),
+                            const SizedBox(width: 10.0),
                             FloatingActionButton.extended(
                               onPressed: () async {
-                                await confirmDelete(context);
+                                await delete(context);
                               },
                               heroTag: 'delete',
                               elevation: 0,
@@ -143,107 +153,101 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        Container(
-                          height: MediaQuery.sizeOf(context).height,
-                          constraints: const BoxConstraints(maxWidth: 400),
-                          child: Column(
-                            children: [
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Expanded(
-                                        child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Text(
-                                            'Qté',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          widget.quantity,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        )
-                                      ],
-                                    )),
-                                    const VerticalDivider(
-                                      thickness: 2,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FloatingActionButton.extended(
+                              onPressed: () async {
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('Donner une conseil:'),
+                                    content: TextField(
+                                      controller: adviceController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Conseil', border: OutlineInputBorder()),
                                     ),
-                                    Expanded(
-                                        child: Column(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          children: [
-                                            const Padding(
-                                              padding: EdgeInsets.all(8.0),
-                                              child: Text(
-                                                'Availability',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 20,
-                                                ),
-                                              ),
-                                            ),
-                                            Text(
-                                              widget.availability,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .bodySmall,
-                                            )
-                                          ],
-                                        )),
-                                    const VerticalDivider(
-                                      thickness: 2,
-                                    ),
-                                    Expanded(
-                                        child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Padding(
-                                          padding: EdgeInsets.all(8.0),
-                                          child: Text(
-                                            'Prix',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 20,
-                                            ),
-                                          ),
-                                        ),
-                                        Text(
-                                          widget.price,
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall,
-                                        )
-                                      ],
-                                    )),
-                                  ]),
-                              const Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: Text(
-                                  'Description',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20,
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () async {
+                                          ConseilModel advice = ConseilModel(
+                                              content: adviceController.text,
+                                              senderUID: userUID!,
+                                              productUID: widget.uid
+                                          );
+                                          ConseilController().addNewAdvice(advice);
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Ajouter'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Fermer'),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                              ),
-                              Text(
-                                widget.description,
-                                style: Theme.of(context).textTheme.bodySmall,
-                              )
-                            ],
-                          ),
+                                );
+                              },
+                              elevation: 0,
+                              backgroundColor: kBlue,
+                              label: const Text("Conseil"),
+                              icon: const Icon(Icons.send),
+                            ),
+                            const SizedBox(width: 10.0),
+                            FloatingActionButton.extended(
+                              onPressed: () async {
+                                showDialog<String>(
+                                  context: context,
+                                  builder: (BuildContext context) => AlertDialog(
+                                    title: const Text('Commander cette produit:'),
+                                    content: TextField(
+                                      keyboardType: TextInputType.number,
+                                      controller: quantityController,
+                                      decoration: const InputDecoration(
+                                          labelText: 'Quantité', border: OutlineInputBorder()),
+                                    ),
+                                    actions: <Widget>[
+                                      TextButton(
+                                        onPressed: () async {
+                                          String number = Random().nextInt(4294967296).toString();
+                                          StockModel stock = StockModel(
+                                              productUID: widget.uid,
+                                              orderBy: userUID!,
+                                              quantity: quantityController.text,
+                                              status: 'en attente',
+                                              orderTime: Timestamp.now(),
+                                              deliveryUID: '',
+                                              number: number
+                                          );
+                                          StockController().createStock(stock);
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Oui'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text('Non'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              elevation: 0,
+                              backgroundColor: Colors.green,
+                              label: const Text("Commander"),
+                              icon: const Icon(Icons.send),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                            width: 400,
+                            height: 400,
+                            child: ConseilsList(productUID: widget.uid, description: widget.description,)
                         )
                       ],
                     ),
@@ -255,32 +259,8 @@ class _PharmacienMedicineDetailsState extends State<PharmacienMedicineDetails> {
         ));
   }
 
-  Future<void> confirmUpdate(BuildContext context) async {
-    await showDialog<String>(
-      context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text('Modifier'),
-        content: const Text('Voulez-vous vraiment modifier?'),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () async {
-              Navigator.pop(context);
-              await update(context);
-            },
-            child: const Text('Oui'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: const Text('Non'),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Future<void> confirmDelete(BuildContext context) async {
+  Future<void> delete(BuildContext context) async {
     await showDialog<String>(
       context: context,
       builder: (BuildContext context) => AlertDialog(

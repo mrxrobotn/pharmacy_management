@@ -7,7 +7,7 @@ import '../functions.dart';
 class ConseilController with ChangeNotifier {
 
   // Method to fetch advices from Firestore
-  Future<ConseilModel?> fetchConseilsByProductId(String id) async {
+  Future<ConseilModel?> fetchAdvicesByProductId(String id) async {
     try {
       DocumentSnapshot doc = await medicines.doc(id).get();
       if (doc.exists) {
@@ -15,7 +15,6 @@ class ConseilController with ChangeNotifier {
 
 
         return ConseilModel(
-            uid: data['uid'],
             content: data['content'].toString(),
             senderUID: data['senderUID'] ,
             productUID: data['productUID']
@@ -27,6 +26,20 @@ class ConseilController with ChangeNotifier {
     } catch (e) {
       print('Error getting Product data: $e');
       return null;
+    }
+  }
+
+  Future<void> addNewAdvice(ConseilModel conseil) async {
+    try {
+      await advices.add({
+        'content': conseil.content,
+        'senderUID': conseil.senderUID,
+        'productUID': conseil.productUID,
+      });
+      notifyListeners();
+      print('New advice added successfully');
+    } catch (e) {
+      print('Error adding new advice: $e');
     }
   }
 }

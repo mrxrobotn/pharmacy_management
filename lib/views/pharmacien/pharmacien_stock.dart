@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pharmacy_management/controllers/notifications_api.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacian_add_stock.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_medicine_details.dart';
 import '../../constants.dart';
+import '../../controllers/user_controller.dart';
 import '../../functions.dart';
 
 class PharmacienStock extends StatefulWidget {
@@ -27,196 +29,219 @@ class _PharmacienStockState extends State<PharmacienStock> {
     _medicinesStream = medicines.where('ownerUID', isEqualTo: userUID).snapshots();
   }
 
+  void checkQuantity(String name, int quantity, String token) {
+    if (quantity <= 3) {
+      sendNotificationMessage(
+        recipientToken: token,
+        title: 'Alerte de stock faible',
+        body: 'La quantité du produit $name est faible. Il ne reste que $quantity.',
+      );
+    }
+    if (quantity == 0) {
+      sendNotificationMessage(
+        recipientToken: token,
+        title: 'Rupture de stock',
+        body: 'Le produit $name est épuisé, merci de contacté un fournisseur.',
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 20),
-            decoration: const BoxDecoration(
-              color: kYellow,
-              borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50), bottomRight: Radius.circular(50)),
-            ),
-            child: ListTile(
-              title: const Text(
-                "Stock",
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              decoration: const BoxDecoration(
+                color: kYellow,
+                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(50), bottomRight: Radius.circular(50)),
               ),
-              subtitle: const Text(
-                "Tous les médicaments",
-                textAlign: TextAlign.center,
-              ),
-              trailing: IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const AddMedecinesPage()),
-                  );
-                },
-                icon: const Icon(Icons.add),
-              ),
-              leading: const Icon(Icons.medication_rounded),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Focus(
-              child: TextField(
-                controller: nameController,
-                decoration: InputDecoration(
-                  hintText: "Rechercher par nom",
-                  prefixIcon: const Icon(Icons.search),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+              child: ListTile(
+                title: const Text(
+                  "Stock",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 ),
-                onChanged: (value) {
-                  if (value.isNotEmpty) {
-                    setState(() {
-                      _searching = true;
-                      _medicinesStream = medicines
-                          .where('ownerUID', isEqualTo: userUID)
-                          .where('name', isGreaterThanOrEqualTo: value)
-                          .snapshots();
-                    });
-                  } else {
-                    setState(() {
-                      _searching = false;
-                      _medicinesStream = medicines.where('ownerUID', isEqualTo: userUID).snapshots();
-                    });
-                  }
-                },
+                subtitle: const Text(
+                  "Tous les médicaments",
+                  textAlign: TextAlign.center,
+                ),
+                trailing: IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const AddMedecinesPage()),
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                ),
+                leading: const Icon(Icons.medication_rounded),
               ),
             ),
-          ),
-          Expanded(
-            child: StreamBuilder(
-              stream: _medicinesStream,
-              builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
-                if (streamSnapshot.hasData) {
-                  return GridView.builder(
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 1.0,
-                      mainAxisSpacing: 10.0,
+            Padding(
+              padding: const EdgeInsets.all(10),
+              child: Focus(
+                child: TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    hintText: "Rechercher par nom",
+                    prefixIcon: const Icon(Icons.search),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    itemCount: streamSnapshot.data!.docs.length,
-                    itemBuilder: (context, index) {
-                      final DocumentSnapshot documentSnapshot = streamSnapshot.data!.docs[index];
-                      return Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: InkWell(
-                          onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => PharmacienMedicineDetails(
-                                documentSnapshot: documentSnapshot,
-                                uid: documentSnapshot['uid'],
-                                name: documentSnapshot['name'],
-                                description: documentSnapshot['description'],
-                                price: documentSnapshot['price'].toString(),
-                                quantity: documentSnapshot['quantity'].toString(),
-                                thumbnail: documentSnapshot['thumbnail'],
-                                expiration: documentSnapshot['expiration'],
-                                availability: documentSnapshot['availability'],
-                              ),
-                            ));
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(16.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.2),
-                                  spreadRadius: 3.0,
-                                  blurRadius: 5.0,
-                                )
-                              ],
-                              color: Colors.white,
-                            ),
-                            child: ListView(
-                              physics: const NeverScrollableScrollPhysics(),
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.only(
-                                    right: 8,
-                                    top: 8,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        'Qté: ${documentSnapshot['quantity']}',
-                                        style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFEF7532)),
-                                      )
-                                    ],
-                                  ),
+                  ),
+                  onChanged: (value) {
+                    if (value.isNotEmpty) {
+                      setState(() {
+                        _searching = true;
+                        _medicinesStream = medicines
+                            .where('ownerUID', isEqualTo: userUID)
+                            .where('name', isGreaterThanOrEqualTo: value)
+                            .snapshots();
+                      });
+                    } else {
+                      setState(() {
+                        _searching = false;
+                        _medicinesStream = medicines.where('ownerUID', isEqualTo: userUID).snapshots();
+                      });
+                    }
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: StreamBuilder(
+                stream: _medicinesStream,
+                builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                  if (streamSnapshot.hasData) {
+                    return GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 1.0,
+                        mainAxisSpacing: 10.0,
+                      ),
+                      itemCount: streamSnapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        final DocumentSnapshot documentSnapshot = streamSnapshot.data!.docs[index];
+                        return Padding(
+                          padding: const EdgeInsets.all(4),
+                          child: InkWell(
+                            onTap: () async {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PharmacienMedicineDetails(
+                                  documentSnapshot: documentSnapshot,
+                                  uid: documentSnapshot['uid'],
+                                  name: documentSnapshot['name'],
+                                  description: documentSnapshot['description'],
+                                  price: documentSnapshot['price'].toString(),
+                                  quantity: documentSnapshot['quantity'].toString(),
+                                  thumbnail: documentSnapshot['thumbnail'],
+                                  expiration: documentSnapshot['expiration'],
+                                  availability: documentSnapshot['availability'],
                                 ),
-                                Container(
-                                  height: 92,
-                                  width: 92,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    image: DecorationImage(
-                                      image: NetworkImage(documentSnapshot['thumbnail']),
-                                      fit: BoxFit.contain,
+                              ));
+                              String? token = await UserController().getTokenForUser(userUID!);
+                              checkQuantity(documentSnapshot['name'], documentSnapshot['quantity'], token!);
+                            },
+                            child: Container(
+                              width: MediaQuery.sizeOf(context).width,
+                              height: MediaQuery.sizeOf(context).height,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    spreadRadius: 3.0,
+                                    blurRadius: 5.0,
+                                  )
+                                ],
+                                color: Colors.white,
+                              ),
+                              child: ListView(
+                                physics: const NeverScrollableScrollPhysics(),
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 8,
+                                      top: 8,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Qté: ${documentSnapshot['quantity']}',
+                                          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFEF7532)),
+                                        )
+                                      ],
                                     ),
                                   ),
-                                ),
-                                const SizedBox(height: 8),
-                                Center(
-                                  child: Text(
-                                    'Nom: ${documentSnapshot['name']}',
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        color: Color(0xFF575E67),
-                                        fontFamily: 'Varela',
-                                        fontSize: 14),
+                                  Container(
+                                    height: 92,
+                                    width: 92,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(16),
+                                      image: DecorationImage(
+                                        image: NetworkImage(documentSnapshot['thumbnail']),
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    color: const Color(0xFFEBEBEB),
-                                    height: 1.0,
+                                  const SizedBox(height: 8),
+                                  Center(
+                                    child: Text(
+                                      'Nom: ${documentSnapshot['name']}',
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                          color: Color(0xFF575E67),
+                                          fontFamily: 'Varela',
+                                          fontSize: 14),
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 4),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Center(
-                                        child: Text(
-                                          'Prix: ${documentSnapshot['price']}',
-                                          style: const TextStyle(
-                                              color: Color(0xFFCC8053),
-                                              fontFamily: 'Varela',
-                                              fontSize: 16),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      color: const Color(0xFFEBEBEB),
+                                      height: 1.0,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Center(
+                                          child: Text(
+                                            'Prix: ${documentSnapshot['price']}',
+                                            style: const TextStyle(
+                                                color: Color(0xFFCC8053),
+                                                fontFamily: 'Varela',
+                                                fontSize: 16),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        width: 16,
-                                      ),
-                                    ],
+                                        const SizedBox(
+                                          width: 16,
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                }
-                return const Center(child: CircularProgressIndicator());
-              },
-            )
-            ,
-          ),
-        ],
+                        );
+                      },
+                    );
+                  }
+                  return const Center(child: CircularProgressIndicator());
+                },
+              )
+              ,
+            ),
+          ],
+        ),
       ),
     );
   }

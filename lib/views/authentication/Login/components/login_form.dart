@@ -1,4 +1,6 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:pharmacy_management/models/user_model.dart';
 import '../../../../constants.dart';
 import '../../../../controllers/auth_response.dart';
 import '../../../../controllers/authentication_service.dart';
@@ -138,33 +140,105 @@ class _LoginFormState extends State<LoginForm> {
                       .then((authResponse) async {
                     if (authResponse.authStatus == AuthStatus.success) {
                       String? uid = await UserController().getUserUidByEmail(email.text);
-                      await users.doc(uid).get().then((value) {
-                        if (value['role'] == 'admin') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const Admin()),
-                          );
-                        }
-                        if (value['role'] == 'pharmacien') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const Pharmacien()),
-                          );
-                        }
-                        if (value['role'] == 'client') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const Client()),
-                          );
-                        }
-                        if (value['role'] == 'fournisseur') {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => const Fournisseur()),
-                          );
-                        }
-                        print(value['role']);
-                      });
+                      bool access= await UserController().checkUserAccess(uid!);
+                      // Get token
+                      final fcmToken = await FirebaseMessaging.instance.getToken();
+                      print(fcmToken);
+                      if (access == true) {
+                        await users.doc(uid).get().then((value) async {
+                          if (value['role'] == 'admin') {
+                            UserModel user = UserModel(
+                                uid: uid,
+                                email: value['email'],
+                                name: value['name'],
+                                role: Role.admin,
+                                canAccess: value['canAccess'],
+                                thumbnail: value['thumbnail'],
+                                token: fcmToken
+                            );
+                            UserController().updateUserData(user);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const Admin()),
+                            );
+
+                          }
+                          if (value['role'] == 'pharmacien') {
+                            UserModel user = UserModel(
+                                uid: uid,
+                                email: value['email'],
+                                name: value['name'],
+                                role: Role.pharmacien,
+                                canAccess: value['canAccess'],
+                                thumbnail: value['thumbnail'],
+                                token: fcmToken
+                            );
+                            UserController().updateUserData(user);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const Pharmacien()),
+                            );
+                          }
+                          if (value['role'] == 'client') {
+                            UserModel user = UserModel(
+                                uid: uid,
+                                email: value['email'],
+                                name: value['name'],
+                                role: Role.client,
+                                canAccess: value['canAccess'],
+                                thumbnail: value['thumbnail'],
+                                token: fcmToken
+                            );
+                            UserController().updateUserData(user);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const Client()),
+                            );
+                          }
+                          if (value['role'] == 'fournisseur') {
+                            UserModel user = UserModel(
+                                uid: uid,
+                                email: value['email'],
+                                name: value['name'],
+                                role: Role.fournisseur,
+                                canAccess: value['canAccess'],
+                                thumbnail: value['thumbnail'],
+                                token: fcmToken
+                            );
+                            UserController().updateUserData(user);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const Fournisseur()),
+                            );
+                          }
+                        });
+                      } else {
+                        showDialog<void>(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Non autorisé'),
+                              content: const SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Merci d\'avoir utilisé notre application.'),
+                                    Text('veuillez attendre qu\'un administrateur approuve votre accès pour utiliser l\'application'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: const Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                     } else {
                       Util.showErrorMessage(context, authResponse.message);
                     }

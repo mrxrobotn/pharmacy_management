@@ -20,5 +20,6 @@ CollectionReference medicines = FirebaseFirestore.instance.collection("medicines
 CollectionReference orders = FirebaseFirestore.instance.collection("orders");
 CollectionReference questions = FirebaseFirestore.instance.collection("questions");
 CollectionReference advices = FirebaseFirestore.instance.collection("advices");
+CollectionReference stockorders = FirebaseFirestore.instance.collection("stockorders");
 
 

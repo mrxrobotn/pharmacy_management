@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import '../functions.dart';
 import '../models/user_model.dart';
 
@@ -24,6 +25,7 @@ class UserController {
           address: data['address'],
           telephone: data['telephone'],
           schedule: data['schedule'],
+          token: data['token'],
         );
       }).toList();
       return allusers;
@@ -36,6 +38,9 @@ class UserController {
   Future<void> saveUserToFirestore(UserModel user) async {
     try {
       User? firebaseUser = _auth.currentUser;
+      // Get token
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+
       if (firebaseUser != null) {
         await _firestore.collection('users').doc(user.uid).set({
           'uid': user.uid,
@@ -44,11 +49,28 @@ class UserController {
           'role': user.role.toString().split('.').last, // Store role as string
           'canAccess': user.canAccess,
           'thumbnail': user.thumbnail,
+          'token': fcmToken,
         });
       }
     } catch (e) {
       print('Error saving user to Firestore: $e');
       rethrow; // Rethrow the error for handling in UI if needed
+    }
+  }
+
+  Future<bool> checkUserAccess(String uid) async {
+    try {
+      DocumentSnapshot doc = await _firestore.collection('users').doc(uid).get();
+      if (doc.exists) {
+        Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+        return data['canAccess'] as bool;
+      } else {
+        print('User with ID $uid does not exist');
+        return false; // User does not exist
+      }
+    } catch (e) {
+      print('Error checking user access: $e');
+      return false; // Error occurred
     }
   }
 
@@ -70,7 +92,9 @@ class UserController {
               thumbnail: data['thumbnail'],
               address: data['address'],
               telephone: data['telephone'],
-              schedule: data['schedule']);
+              schedule: data['schedule'],
+              token: data['token'],
+          );
         }
       }
       return null;
@@ -96,7 +120,9 @@ class UserController {
             thumbnail: data['thumbnail'],
             address: data['address'],
             telephone: data['telephone'],
-            schedule: data['schedule']);
+            schedule: data['schedule'],
+            token: data['token']
+        );
       } else {
         print('User with ID $userID does not exist');
         return null;
@@ -124,23 +150,6 @@ class UserController {
     }
   }
 
-  Future<int> countUserOrders() async {
-    try {
-      User? firebaseUser = _auth.currentUser;
-      if (firebaseUser != null) {
-        QuerySnapshot querySnapshot = await _firestore
-            .collection('orders')
-            .where('recieverUID', isEqualTo: firebaseUser.uid)
-            .get();
-        return querySnapshot.size;
-      }
-      return 0;
-    } catch (e) {
-      print('Error counting user medicaments: $e');
-      return 0;
-    }
-  }
-
   Future<void> updateUserData(UserModel user) async {
     try {
       User? firebaseUser = _auth.currentUser;
@@ -154,6 +163,7 @@ class UserController {
           'address': user.address,
           'telephone': user.telephone,
           'schedule': user.schedule,
+          'token': user.token,
         });
       }
     } catch (e) {
@@ -185,6 +195,30 @@ class UserController {
       }
     } catch (e) {
       print('Error getting user UID by email: $e');
+      return null;
+    }
+  }
+
+  // Function to retrieve selected reclamation user's Token
+  Future<String?> getTokenForUser(String userId) async {
+    try {
+
+      // Get the document snapshot for the specified user ID
+      DocumentSnapshot snapshot = await users.doc(userId).get();
+
+      // Check if the document exists
+      if (snapshot.exists) {
+        // Cast the data to a Map<String, dynamic>
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+
+        // Access the 'token' field from the document data
+        return data['token'] as String?;
+      } else {
+        print('user does not exist');
+        return null;
+      }
+    } catch (e) {
+      print('Error getting token: $e');
       return null;
     }
   }

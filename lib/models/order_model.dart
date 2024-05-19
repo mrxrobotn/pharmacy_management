@@ -1,34 +1,17 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
-class Product {
-  final String productUID;
-  final int quantity;
-
-  Product({
-    required this.productUID,
-    required this.quantity,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'productUID': productUID,
-      'quantity': quantity,
-    };
-  }
-}
-
 class OrderModel with ChangeNotifier {
-  final String uid;
   final String number;
   final String orderBy;
   final String status;
   final String totalAmount;
   final String paymentDetails;
-  final String orderTime;
-  final Map<String, Product> products;
+  final Timestamp orderTime;
+  final List<String> products;
+  final List<String> productsOwners;
 
   OrderModel({
-    required this.uid,
     required this.number,
     required this.orderBy,
     required this.status,
@@ -36,18 +19,6 @@ class OrderModel with ChangeNotifier {
     required this.paymentDetails,
     required this.orderTime,
     required this.products,
+    required this.productsOwners,
   });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'uid': uid,
-      'number': number,
-      'orderBy': orderBy,
-      'status': status,
-      'totalAmount': totalAmount,
-      'paymentDetails': paymentDetails,
-      'orderTime': orderTime,
-      'products': products.map((key, value) => MapEntry(key, value.toMap())),
-    };
-  }
 }

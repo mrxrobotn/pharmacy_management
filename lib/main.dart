@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmacy_management/themes.dart';
 import 'package:pharmacy_management/views/admin/admin_home.dart';
@@ -6,8 +9,10 @@ import 'package:pharmacy_management/views/authentication/Welcome/welcome_screen.
 import 'package:pharmacy_management/views/client/client_home.dart';
 import 'package:pharmacy_management/views/fournisseur/fournisseur_home.dart';
 import 'package:pharmacy_management/views/pharmacien/pharmacien_home.dart';
+import 'controllers/user_controller.dart';
 import 'firebase_options.dart';
 import 'functions.dart';
+import 'models/medicine_model.dart';
 
 
 void main() async {
@@ -16,12 +21,39 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  //permission notification
+  final settings = await FirebaseMessaging.instance.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
+
+  if (kDebugMode) {
+    print('Permission granted: ${settings.authorizationStatus}');
+  }
+
+  await FirebaseMessaging.instance.setAutoInitEnabled(true);
+
   if (user != null) {
     await users.doc(userUID).get().then((value) {
       if (value['role'] == 'admin') {
         runApp(const Admin());
       }
       if (value['role'] == 'pharmacien') {
+        // Notify user when the stock is low or empty
+        medicines.where('ownerUID', isEqualTo: userUID).snapshots().listen((snapshot) async {
+          String? token = await UserController().getTokenForUser(userUID!);
+          for (var docChange in snapshot.docChanges) {
+            if (docChange.type == DocumentChangeType.modified) {
+              MedicineModel medicine = MedicineModel.fromSnapshot(docChange.doc);
+              medicine.checkQuantityAndNotify(token!);
+            }
+          }
+        });
         runApp(const Pharmacien());
       }
       if (value['role'] == 'client') {

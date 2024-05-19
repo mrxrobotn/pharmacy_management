@@ -26,13 +26,11 @@ class _PharmacienHomeState extends State<PharmacienHome> {
     const SettingsPage(),
   ];
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBlue,
-      appBar: AppBar(
-        title: const Text("Bienvenue"),
-      ),
       body: Stack(
         children: [
           _pages[_selectedIndex],

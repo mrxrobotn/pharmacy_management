@@ -1,8 +1,15 @@
+import 'dart:math';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:pharmacy_management/controllers/medicine_controller.dart';
+import 'package:pharmacy_management/controllers/orders_controller.dart';
+import 'package:pharmacy_management/models/order_model.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart' as badges;
 
 import '../../controllers/cart_provider.dart';
+import '../../functions.dart';
 import '../../models/cart_item_model.dart';
 import 'cart_list_item.dart';
 
@@ -14,6 +21,8 @@ class CartDetails extends StatefulWidget {
 }
 
 class _CartDetailsState extends State<CartDetails> {
+  double total = 0.0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -81,7 +90,7 @@ class _CartDetailsState extends State<CartDetails> {
               ),
               Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
+                height: 800,
                 padding: const EdgeInsets.only(
                     left: 16, right: 16, bottom: 80, top: 20),
                 margin: const EdgeInsets.only(top: 70),
@@ -201,7 +210,35 @@ class _CartDetailsState extends State<CartDetails> {
                                     borderRadius: BorderRadius.circular(10)),
                                 height: 50,
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    String number = Random().nextInt(4294967296).toString();
+                                    List<String> products = [];
+                                    List<String> productsOwners = [];
+                                    for (var item in cartProvider.cartItems) {
+                                      products.add(item.medicine.uid);
+                                      productsOwners.add(item.medicine.ownerUID);
+                                      int newQuantity = item.medicine.quantity - 1;
+                                      MedicineController().updateQuantityByName(item.medicine.name, newQuantity);
+                                    }
+
+                                    OrderModel order = OrderModel(
+                                        number: number,
+                                        orderBy: userUID!,
+                                        status: 'en attente',
+                                        totalAmount: cartProvider.totalPrice.toStringAsFixed(2),
+                                        paymentDetails: "Paiement à la livraison",
+                                        orderTime: Timestamp.now(),
+                                        products: products,
+                                        productsOwners: productsOwners,
+                                    );
+                                    OrderController().addOrder(order);
+                                    Provider.of<CartProvider>(context,
+                                        listen: false)
+                                        .clearCart();
+                                    users.doc(userUID).collection('orders').add({
+                                      "orderNumber": number
+                                    });
+                                  },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor:
                                     Theme.of(context).colorScheme.primary,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pharmacy_management/constants.dart';
 
+import '../../controllers/notifications_api.dart';
 import '../../controllers/user_controller.dart';
 import '../../functions.dart';
 import '../../models/user_model.dart';
@@ -8,7 +9,7 @@ import '../../models/user_model.dart';
 class UserDetailsPage extends StatefulWidget {
   final UserModel user;
 
-  const UserDetailsPage({Key? key, required this.user}) : super(key: key);
+  const UserDetailsPage({super.key, required this.user});
 
   @override
   _UserDetailsPageState createState() => _UserDetailsPageState();
@@ -129,8 +130,19 @@ class _UserDetailsPageState extends State<UserDetailsPage> {
                   Switch(
                     value: _canAccess,
                     onChanged: (value) {
-                      setState(() {
+                      setState(() async {
+                        String? token = await UserController().getTokenForUser(widget.user.uid);
                         _canAccess = value;
+                        // Check if Token is empty
+                        if (token != null) {
+                          sendNotificationMessage(
+                            recipientToken: token,
+                            title: 'Votre statut a été modifié',
+                            body: _canAccess ? "vous avez maintenant l'accès à l'application" : "vous n'avez pas maintenant l\'accès à l'application",
+                          );
+                        } else {
+                          print('Failed to get token for the user');
+                        }
                       });
                     },
                   ),

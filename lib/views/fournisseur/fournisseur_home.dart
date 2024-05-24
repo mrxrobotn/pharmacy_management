@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-
 import '../../constants.dart';
 import '../../models/navbar_model.dart';
 import '../common/settings_page.dart';
 import '../widgets/custom_paint.dart';
-import 'fournisseur_orders.dart';
+import 'fourniseeur_orders.dart';
+import 'fournisseur_stocks.dart';
 
 class FournisseurHome extends StatefulWidget {
   const FournisseurHome({super.key});
@@ -18,6 +18,7 @@ class _FournisseurHomeState extends State<FournisseurHome> {
 
   final List<Widget> _pages = [
     const FournisseurOrders(),
+    const FournisseurStocks(),
     const SettingsPage(),
   ];
 

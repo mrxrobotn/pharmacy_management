@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pharmacy_management/controllers/medicine_controller.dart';
 import 'package:pharmacy_management/controllers/orders_controller.dart';
+import 'package:pharmacy_management/controllers/user_controller.dart';
 import 'package:pharmacy_management/models/order_model.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart' as badges;
@@ -21,7 +22,18 @@ class CartDetails extends StatefulWidget {
 }
 
 class _CartDetailsState extends State<CartDetails> {
-  double total = 0.0;
+  bool useDiscount = false;
+  TextEditingController couponController = TextEditingController();
+
+
+  bool _validateCoupon(String value) {
+    if (value.isEmpty) {
+      return false;
+    }
+    double? points = double.tryParse(value);
+    return points != null && points <= 1000 && points >= 0;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -201,6 +213,33 @@ class _CartDetailsState extends State<CartDetails> {
                                   ),
                                 ],
                               ),
+                              Row(
+                                children: [
+                                  Text(
+                                    'Points de fidelité:',
+                                    style:
+                                    Theme.of(context).textTheme.titleMedium,
+                                  ),
+                                  Expanded(child: Container()),
+                                  SizedBox(
+                                    height: 60,
+                                    width: 200,
+                                    child: TextFormField(
+                                      controller: couponController,
+                                      keyboardType: TextInputType.number,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Entrer points (0 - 1000)',
+                                      ),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          useDiscount = _validateCoupon(value);
+                                        });
+                                      },
+                                    ),
+                                  )
+                                ],
+                              ),
+
                               const SizedBox(
                                 height: 20,
                               ),
@@ -220,24 +259,44 @@ class _CartDetailsState extends State<CartDetails> {
                                       int newQuantity = item.medicine.quantity - 1;
                                       MedicineController().updateQuantityByName(item.medicine.name, newQuantity);
                                     }
-
-                                    OrderModel order = OrderModel(
+                                    if (useDiscount == true) {
+                                      UserController().updateUserCoupon(userUID!, int.parse(couponController.text.toString()), false);
+                                      OrderModel order = OrderModel(
                                         number: number,
                                         orderBy: userUID!,
-                                        status: 'en attente',
+                                        status: '',
+                                        totalAmount: (cartProvider.totalPrice - (double.parse(couponController.text) * 0.01)).toString(),
+                                        paymentDetails: "Paiement à la livraison",
+                                        orderTime: Timestamp.now(),
+                                        products: products,
+                                        productsOwners: productsOwners,
+                                      );
+                                      OrderController().addOrder(order);
+                                      users.doc(userUID).collection('orders').add({
+                                        "orderNumber": number
+                                      });
+
+                                    } else {
+                                      OrderModel order = OrderModel(
+                                        number: number,
+                                        orderBy: userUID!,
+                                        status: '',
                                         totalAmount: cartProvider.totalPrice.toStringAsFixed(2),
                                         paymentDetails: "Paiement à la livraison",
                                         orderTime: Timestamp.now(),
                                         products: products,
                                         productsOwners: productsOwners,
-                                    );
-                                    OrderController().addOrder(order);
+                                      );
+                                      OrderController().addOrder(order);
+                                      users.doc(userUID).collection('orders').add({
+                                        "orderNumber": number
+                                      });
+                                      UserController().updateUserCoupon(userUID!, 100, true);
+                                    }
+
                                     Provider.of<CartProvider>(context,
                                         listen: false)
                                         .clearCart();
-                                    users.doc(userUID).collection('orders').add({
-                                      "orderNumber": number
-                                    });
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor:

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class OrderModel with ChangeNotifier {
   final String number;
   final String orderBy;
+  late String? deliveryUID;
   final String status;
   final String totalAmount;
   final String paymentDetails;
@@ -14,6 +15,7 @@ class OrderModel with ChangeNotifier {
   OrderModel({
     required this.number,
     required this.orderBy,
+    this.deliveryUID,
     required this.status,
     required this.totalAmount,
     required this.paymentDetails,
@@ -21,4 +23,19 @@ class OrderModel with ChangeNotifier {
     required this.products,
     required this.productsOwners,
   });
+
+  factory OrderModel.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return OrderModel(
+      number: data['number'],
+      orderBy: data['orderBy'],
+      deliveryUID: data['deliveryUID'],
+      status: data['status'],
+      totalAmount: data['totalAmount'],
+      paymentDetails: data['paymentDetails'],
+      orderTime: data['orderTime'],
+      products: List<String>.from(data['products']),
+      productsOwners: List<String>.from(data['productsOwners']),
+    );
+  }
 }

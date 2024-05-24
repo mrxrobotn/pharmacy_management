@@ -33,6 +33,7 @@ List<NavBarModel> adminNavBar = [
 ];
 
 List<NavBarModel> fournisseurNavBar = [
-  NavBarModel(id: 0, imagePath: 'assets/icons/lists.png', name: 'Commandes'),
+  NavBarModel(id: 0, imagePath: 'assets/icons/lists.png', name: 'Patients'),
+  NavBarModel(id: 1, imagePath: 'assets/icons/lists.png', name: 'Pharmaciens'),
   NavBarModel(id: 2, imagePath: 'assets/icons/user.png', name: 'Profile'),
 ];

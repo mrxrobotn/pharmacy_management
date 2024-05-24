@@ -4,7 +4,7 @@ import '../functions.dart';
 import '../models/stock_model.dart';
 
 class FournisseurController {
-  Stream<List<Map<String, dynamic>>> getOrders(String status) {
+  Stream<List<Map<String, dynamic>>> getStockOrders(String status) {
     try {
       return stockorders
           .where('status', isEqualTo: status)
@@ -29,7 +29,7 @@ class FournisseurController {
     }
   }
 
-  Future<StockModel?> getOrderByNumber(String orderNumber) async {
+  Future<StockModel?> getStockOrderByNumber(String orderNumber) async {
     try {
       QuerySnapshot querySnapshot = await stockorders.where('number', isEqualTo: orderNumber).get();
       if (querySnapshot.docs.isNotEmpty) {
@@ -94,4 +94,6 @@ class FournisseurController {
       print('Error updating order: $e');
     }
   }
+
+
 }

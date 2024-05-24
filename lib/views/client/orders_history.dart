@@ -304,11 +304,11 @@ class _OrderDetailsWidgetState extends State<OrderDetailsWidget> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildDetailRow(Icons.confirmation_number, 'Order Number', order.number),
+                      _buildDetailRow(Icons.confirmation_number, 'Commande N°', order.number),
                       _buildDetailRow(Icons.info_outline, 'Status', order.status, color: _getStatusColor(order.status)),
-                      _buildDetailRow(Icons.attach_money, 'Total Amount', order.totalAmount),
-                      _buildDetailRow(Icons.access_time, 'Order Time', order.orderTime.toDate().toString()),
-                      _buildDetailRow(Icons.payment, 'Payment Details', order.paymentDetails),
+                      _buildDetailRow(Icons.attach_money, 'Prix Total', order.totalAmount),
+                      _buildDetailRow(Icons.access_time, 'Date', order.orderTime.toDate().toString()),
+                      _buildDetailRow(Icons.payment, 'Methode de Paiement', order.paymentDetails),
                       const SizedBox(height: 10),
                       const Text(
                         'Products:',

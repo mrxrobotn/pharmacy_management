@@ -10,6 +10,7 @@ class OrderController {
       DocumentReference docRef = await orders.add({
         'number': order.number,
         'orderBy': order.orderBy,
+        'deliveryUID': order.deliveryUID,
         'status': order.status,
         'totalAmount': order.totalAmount,
         'paymentDetails': order.paymentDetails,
@@ -38,6 +39,7 @@ class OrderController {
         return OrderModel(
           number: data['number'],
           orderBy: data['orderBy'],
+          deliveryUID: data['deliveryUID'],
           status: data['status'],
           totalAmount: data['totalAmount'],
           paymentDetails: data['paymentDetails'],
@@ -61,6 +63,7 @@ class OrderController {
         return OrderModel(
           number: data['number'],
           orderBy: data['orderBy'],
+          deliveryUID: data['deliveryUID'],
           status: data['status'],
           totalAmount: data['totalAmount'],
           paymentDetails: data['paymentDetails'],
@@ -107,6 +110,7 @@ class OrderController {
             results.add({
               'orderNumber': data['number'],
               'orderBy': data['orderBy'],
+              'deliveryUID': data['deliveryUID'],
               'productName': await getProductName(productId),
               'status': data['status'],
               'totalAmount': data['totalAmount'],

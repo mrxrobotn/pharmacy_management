@@ -12,6 +12,7 @@ class UserModel with ChangeNotifier {
   String? address;
   String? schedule;
   String? token;
+  int? coupon;
 
   UserModel({
     required this.uid,
@@ -24,5 +25,6 @@ class UserModel with ChangeNotifier {
     this.address,
     this.schedule,
     this.token,
+    this.coupon,
   });
 }

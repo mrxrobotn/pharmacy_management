@@ -214,6 +214,21 @@ class _SettingsPageState extends State<SettingsPage> {
                                             const SizedBox(
                                               height: 10,
                                             ),
+                                            Container(
+                                              margin: const EdgeInsets.all(5),
+                                              child: Card(
+                                                child: ListTile(
+                                                  title: Text(
+                                                    'Points de fidèlité: ${_user.coupon.toString()} points',
+                                                    style: const TextStyle(
+                                                      fontWeight: FontWeight.bold,
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                  leading: const SizedBox(),
+                                                ),
+                                              ),
+                                            ),
                                             _buildUserInfoField('Email', _user.email),
                                             _buildUserInfoField('Tél', _user.telephone ?? 'Non défini'),
                                             _buildUserInfoField('Addresse', _user.address ?? 'Non défini'),

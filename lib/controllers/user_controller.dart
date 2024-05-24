@@ -26,6 +26,7 @@ class UserController {
           telephone: data['telephone'],
           schedule: data['schedule'],
           token: data['token'],
+          coupon: data['coupon'],
         );
       }).toList();
       return allusers;
@@ -50,6 +51,7 @@ class UserController {
           'canAccess': user.canAccess,
           'thumbnail': user.thumbnail,
           'token': fcmToken,
+          'coupon': 0,
         });
       }
     } catch (e) {
@@ -94,6 +96,7 @@ class UserController {
               telephone: data['telephone'],
               schedule: data['schedule'],
               token: data['token'],
+              coupon: data['coupon'],
           );
         }
       }
@@ -121,7 +124,8 @@ class UserController {
             address: data['address'],
             telephone: data['telephone'],
             schedule: data['schedule'],
-            token: data['token']
+            token: data['token'],
+            coupon: data['coupon'],
         );
       } else {
         print('User with ID $userID does not exist');
@@ -164,6 +168,7 @@ class UserController {
           'telephone': user.telephone,
           'schedule': user.schedule,
           'token': user.token,
+          'coupon': user.coupon,
         });
       }
     } catch (e) {
@@ -222,4 +227,44 @@ class UserController {
       return null;
     }
   }
+
+
+  Future<void> updateUserCoupon(String userId, int newCouponValue, bool add) async {
+    try {
+      // Get the current coupon value
+      DocumentSnapshot userSnapshot = await users.doc(userId).get();
+      if (userSnapshot.exists) {
+        Map<String, dynamic>? userData = userSnapshot.data() as Map<String, dynamic>?;
+
+        if (userData != null) {
+          int currentCouponValue = userData['coupon'] ?? 0;
+          int updatedCouponValue;
+
+          if (add) {
+            updatedCouponValue = currentCouponValue + newCouponValue;
+          } else {
+            updatedCouponValue = currentCouponValue - newCouponValue;
+          }
+
+          // Ensure the updated coupon value is not negative
+          if (updatedCouponValue < 0) {
+            updatedCouponValue = 0;
+          }
+
+          // Update the coupon field with the new value
+          await users.doc(userId).update({
+            'coupon': updatedCouponValue,
+          });
+        } else {
+          print('User data is null or not a Map<String, dynamic>');
+        }
+      } else {
+        print('User with ID $userId does not exist');
+      }
+    } catch (e) {
+      print('Error updating user coupon: $e');
+      rethrow;
+    }
+  }
+
 }
